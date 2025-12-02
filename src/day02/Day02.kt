@@ -17,8 +17,13 @@ fun main() {
     }
 
     fun part2(input: List<String>): Long {
-        TODO("Not yet implemented")
-    }
+        val allInvalids = mutableListOf<Long>()
+        for(line in input) {
+            val (a,b) = line.split("-").map { it.toLong() }
+            val invalids: List<Long> = findInvalidsInRange2(a, b)
+            allInvalids.addAll(invalids)
+        }
+        return allInvalids.sum()    }
 
 
     // test if implementation meets criteria from the description, like:
@@ -28,8 +33,8 @@ fun main() {
     prcp(part1(input))
 
 
-//    check(part2(testInput) == 900)
-//    prcp(part2(input))
+    check(part2(testInput) == 4174379265L)
+    prcp(part2(input))
 }
 
 fun findInvalidsInRange(a: Long, b: Long): List<Long> {
@@ -41,6 +46,14 @@ fun findInvalidsInRangeNaive(a: Long, b: Long): List<Long> {
     return numbers.filter { isInvalid(it) }
 }
 
+fun findInvalidsInRange2(a: Long, b: Long): List<Long> {
+    val numbers = a..b
+    return numbers.filter { isInvalid2(it) }
+}
+
+fun isInvalid2(it: Long): Boolean {
+    return it.toString().matches(Regex("^(.*)\\1+$"))
+}
 fun isInvalid(it: Long): Boolean {
     return it.toString().matches(Regex("^(.*)\\1$"))
 }
