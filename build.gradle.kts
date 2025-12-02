@@ -1,19 +1,30 @@
 plugins {
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "2.1.0"
 }
 
 repositories {
     mavenCentral()
 }
 
-tasks {
-    sourceSets {
-        main {
-            java.srcDirs("src")
-        }
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
     }
+}
 
-    wrapper {
-        gradleVersion = "7.3"
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(24))
+    }
+}
+
+tasks.wrapper {
+    gradleVersion = "8.10"
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+sourceSets {
+    named("main") {
+        java.srcDirs("src")
     }
 }
