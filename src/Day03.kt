@@ -1,21 +1,21 @@
 import util.prcp
 import util.readInput
 
-fun getBestJoltage(input: String): Long {
+fun getBestJoltage(input: String, amount: Int = 2): String {
+    if(amount == 0) return ""
     val numbersChars = input.split("").slice(1..input.length)
-    val max1 = numbersChars.slice(0..<numbersChars.size - 1).maxBy { it.toInt() }
-    val max2 = numbersChars.slice((numbersChars.indexOf(max1))+1..<numbersChars.size).maxBy { it.toInt() }
-    println(max1 + max2)
-    return (max1 + max2).toLong()
+    val max1 = numbersChars.slice(0..<numbersChars.size - (amount-1)).maxBy { it.toInt() }
+    val rest = numbersChars.slice((numbersChars.indexOf(max1))+1..<numbersChars.size)
+    return max1 +getBestJoltage(rest.joinToString(""), amount-1)
 }
 
 fun main() {
     fun part1(input: List<String>): Long {
-        return input.map { getBestJoltage(it) }.sumOf { it }
+        return input.map { getBestJoltage(it).toLong() }.sumOf { it }
     }
 
     fun part2(input: List<String>): Long {
-        TODO("todo")
+        return input.map { getBestJoltage(it, 12).toLong() }.sumOf { it }
     }
 
 
@@ -26,6 +26,6 @@ fun main() {
     prcp(part1(input))
 
 
-    check(part2(testInput) == 4174379265L)
+    check(part2(testInput) == 3121910778619L)
     prcp(part2(input))
 }
