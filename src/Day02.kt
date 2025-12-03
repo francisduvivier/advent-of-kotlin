@@ -1,5 +1,3 @@
-package day02
-
 import util.prcp
 import util.readInput
 
