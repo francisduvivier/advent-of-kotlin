@@ -1,0 +1,31 @@
+import util.get8NeighborLocations
+import util.prcp
+import util.readInput
+import util.rowCols
+
+
+fun main() {
+    fun part1(input: List<String>): Long {
+        val paperRolls = rowCols(input).filter { input[it.first][it.second] == '@' }
+        return paperRolls.count {
+            val nbs: List<Pair<Int, Int>> = get8NeighborLocations(input, it.first, it.second)
+            nbs.count { input[it.first][it.second] == '@' } < 4
+        }.toLong()
+
+    }
+
+    fun part2(input: List<String>): Long {
+        return TODO()
+    }
+
+
+    // test if implementation meets criteria from the description, like:
+    val testInput = readInput("Day04.test")
+    check(part1(testInput) == 13L)
+    val input = readInput("Day04")
+    prcp(part1(input))
+
+
+//    check(part2(testInput) == 3121910778619L)
+//    prcp(part2(input))
+}
