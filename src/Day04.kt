@@ -2,20 +2,36 @@ import util.get8NeighborLocations
 import util.prcp
 import util.readInput
 import util.rowCols
+import util.toCharMatrix
 
 
 fun main() {
     fun part1(input: List<String>): Long {
-        val paperRolls = rowCols(input).filter { input[it.first][it.second] == '@' }
+        val matrix = toCharMatrix(input)
+
+        val paperRolls = rowCols(matrix).filter { matrix[it.first][it.second] == '@' }
         return paperRolls.count {
-            val nbs: List<Pair<Int, Int>> = get8NeighborLocations(input, it.first, it.second)
-            nbs.count { input[it.first][it.second] == '@' } < 4
+            val nbs: List<Pair<Int, Int>> = get8NeighborLocations(matrix, it.first, it.second)
+            nbs.count { matrix[it.first][it.second] == '@' } < 4
         }.toLong()
 
     }
 
     fun part2(input: List<String>): Long {
-        return TODO()
+        val matrix = toCharMatrix(input)
+        var totalRemoved = 0L
+        var removed = 0
+        do {
+            val paperRolls = rowCols(matrix).filter { matrix[it.first][it.second] == '@' }
+            val removable = paperRolls.filter {
+                val nbs: List<Pair<Int, Int>> = get8NeighborLocations(matrix, it.first, it.second)
+                nbs.count { matrix[it.first][it.second] == '@' } < 4
+            }
+            removed = removable.size
+            totalRemoved += removable.size
+            removable.forEach { removable -> matrix[removable.first][removable.second] = '.' }
+        } while (removed > 0)
+        return totalRemoved
     }
 
 
@@ -26,6 +42,6 @@ fun main() {
     prcp(part1(input))
 
 
-//    check(part2(testInput) == 3121910778619L)
-//    prcp(part2(input))
+    check(part2(testInput) == 43L)
+    prcp(part2(input))
 }
