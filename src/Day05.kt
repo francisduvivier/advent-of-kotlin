@@ -57,7 +57,18 @@ fun countNewRanges(it: LongRange, doneRanges: List<LongRange>): Long {
             return 0L
         }
     }
-    return (endInclusive + 1 - start)
+    var alreadyCountedWithin = 0L
+    val finalRange = start..endInclusive
+    for (doneRange in doneRanges) {
+        if (finalRange.contains(doneRange.start)) {
+            alreadyCountedWithin += countSize(doneRange)
+        }
+    }
+    return countSize(finalRange) - alreadyCountedWithin
+}
+
+fun countSize(range: LongRange): Long {
+   return range.endExclusive - range.start
 }
 
 
