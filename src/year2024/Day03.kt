@@ -1,3 +1,9 @@
+package year2024
+
+import indexes
+import prcp
+import readInput
+
 fun main() {
     fun compare1s(input: List<String>, i: Int): Int {
         val nbLines = input.size

@@ -1,3 +1,9 @@
+package year2024
+
+import prcp
+import readInput
+import kotlin.text.iterator
+
 typealias CountMap = HashMap<Char, Long>
 
 typealias CountForStepsMap = HashMap<Int, CountMap>

@@ -1,3 +1,10 @@
+package year2024
+
+import get8NeighborLocations
+import prcp
+import readInput
+import rowCols
+
 fun main() {
     fun increase8Neighbors(board: Array<IntArray>, row: Int, col: Int): Int {
         if (board[row][col] != 10) {

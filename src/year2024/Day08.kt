@@ -1,3 +1,8 @@
+package year2024
+
+import prcp
+import readInput
+
 fun main() {
     fun part1(input: List<String>): Int {
         val output = input.map {

@@ -1,3 +1,9 @@
+package year2024
+
+import checkEquals
+import prcp
+import readInput
+
 typealias SN = PairOrNumber
 
 fun main() {

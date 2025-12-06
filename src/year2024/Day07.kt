@@ -1,3 +1,8 @@
+package year2024
+
+import prcp
+import readInput
+
 fun main() {
 
     fun calcSolution(input: List<String>, calculateCost: (Int, Int) -> Int): Int {

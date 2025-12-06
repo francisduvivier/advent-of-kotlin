@@ -1,3 +1,8 @@
+package year2024
+
+import prcp
+import readInput
+import rowCols
 import java.awt.geom.Line2D
 
 fun toLine2D(inputLine: String): Line2D.Float {

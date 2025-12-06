@@ -1,3 +1,9 @@
+package year2024
+
+import prcp
+import readInput
+import kotlin.text.iterator
+
 fun main() {
     val syntaxCheckerScoreMap = mapOf(
         ')' to 3,

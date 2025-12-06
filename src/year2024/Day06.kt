@@ -1,3 +1,8 @@
+package year2024
+
+import prcp
+import readInput
+
 fun main() {
 
     fun iterateLife(lanternTtlCounters: LongArray, cycles: Int) {

@@ -1,3 +1,8 @@
+package year2024
+
+import prcp
+import readInput
+
 fun main() {
     class Cave(val name: String, val maxVisits: Int, val end: Boolean = false) {
     }

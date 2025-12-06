@@ -1,3 +1,8 @@
+package year2024
+
+import checkEquals
+import prcp
+
 typealias WinCounts = List<Long>
 
 fun main() {

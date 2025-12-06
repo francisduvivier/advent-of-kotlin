@@ -1,3 +1,11 @@
+package year2024
+
+import Pos3D
+import getNeighborLocations
+import getNeighbors
+import prcp
+import readInput
+
 fun main() {
     fun exploreValleyRec(matrix: Array<IntArray>, row: Int, col: Int, selector: (Int) -> Boolean): List<Int> {
         val value = matrix[row][col]
@@ -52,4 +60,8 @@ fun main() {
     val input = readInput("Day09")
     prcp(part1(input))
     prcp(part2(input))
+}
+
+fun orient(pos3D: Pos3D, orientation: Orientation): Pos3D {
+    return orientation.mutatePos(pos3D);
 }

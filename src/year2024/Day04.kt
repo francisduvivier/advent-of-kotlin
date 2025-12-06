@@ -1,3 +1,9 @@
+package year2024
+
+import prcp
+import readInput
+import rowCols
+
 fun main() {
 
     fun rowOrColumnFull(boardSelection: Array<BooleanArray>, row: Int, col: Int): Boolean {

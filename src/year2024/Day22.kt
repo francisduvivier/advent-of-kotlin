@@ -1,3 +1,9 @@
+package year2024
+
+import Pos3D
+import checkEquals
+import prcp
+import readInput
 import java.lang.Math.max
 import java.lang.Math.min
 

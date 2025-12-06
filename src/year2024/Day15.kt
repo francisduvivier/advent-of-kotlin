@@ -1,3 +1,10 @@
+package year2024
+
+import checkEquals
+import getNeighborLocations
+import prcp
+import readInput
+
 typealias CostCalcFun = (toRow: Int, toCol: Int, fromRow: Int, fromCol: Int) -> Int
 
 fun main() {

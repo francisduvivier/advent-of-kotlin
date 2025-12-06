@@ -12,10 +12,6 @@ class Pos3D(val x: Int, val y: Int, val z: Int) {
         return Pos3D(all.mapIndexed { index, it -> it - other.all[index] })
     }
 
-    fun orient(orientation: Orientation): Pos3D {
-        return orientation.mutatePos(this);
-    }
-
     fun add(other: Pos3D): Pos3D {
         return Pos3D(all.mapIndexed { index, it -> it + other.all[index] })
     }

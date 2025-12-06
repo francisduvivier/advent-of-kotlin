@@ -1,4 +1,7 @@
-import kotlin.math.abs
+package year2024
+
+import checkEquals
+import prcp
 
 fun main() {
     fun calcIncreasingSum(maxVal: Int): Int {

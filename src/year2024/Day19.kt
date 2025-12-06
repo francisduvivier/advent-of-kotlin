@@ -1,4 +1,9 @@
-import kotlin.math.absoluteValue
+package year2024
+
+import Pos3D
+import checkEquals
+import prcp
+import readInput
 
 
 class RawScannerData(val id: Int) : ArrayList<Pos3D>() {
@@ -51,7 +56,7 @@ private fun normalizeCoords(
     orientation: Orientation,
     scannerPos: Pos3D
 ): Pos3D {
-    val orientedCoords = rawBeacon.orient(orientation)
+    val orientedCoords = orient(rawBeacon, orientation)
     val mappedCoords = orientedCoords.add(scannerPos)
     return mappedCoords
 }

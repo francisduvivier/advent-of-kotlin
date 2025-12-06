@@ -1,3 +1,12 @@
+package year2024
+
+import checkEquals
+import max
+import min
+import prcp
+import product
+import readInput
+
 fun String.fromHexToBits(): String {
     return map { it.digitToInt(16).toString(2).padStart(4, '0') }.joinToString("")
 }
