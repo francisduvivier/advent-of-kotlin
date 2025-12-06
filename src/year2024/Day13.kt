@@ -1,7 +1,8 @@
 package year2024
 
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 
 fun main() {
     fun getFoldedMatrix(
@@ -67,10 +68,10 @@ fun main() {
 
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day13.test")
-    check(part1(testInput) == 17)
+    val testInput = readInput2021("Day13.test")
+    checkEquals(part1(testInput), 17)
 
-    val input = readInput("Day13")
+    val input = readInput2021("Day13")
     prcp(part1(input))
     (part2(input))
 }

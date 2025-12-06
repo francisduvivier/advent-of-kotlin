@@ -5,7 +5,8 @@ import max
 import min
 import prcp
 import product
-import readInput
+import readInput2021
+import checkEquals
 
 fun String.fromHexToBits(): String {
     return map { it.digitToInt(16).toString(2).padStart(4, '0') }.joinToString("")
@@ -135,7 +136,7 @@ fun main() {
     checkEquals(part1("C0015000016115A2E0802F182340"), 23)
     checkEquals(part1("A0016C880162017C3686B18A3D4780"), 31)
 
-    val input = readInput("Day16")
+    val input = readInput2021("Day16")
     prcp(part1(input[0]))
     checkEquals(part2("04005AC33890"), 54)
     checkEquals(part2("C200B40A82"), 3)

@@ -2,7 +2,8 @@ package year2024
 
 import checkEquals
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 
 typealias SN = PairOrNumber
 
@@ -40,7 +41,7 @@ fun main() {
     }
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day18.test")
+    val testInput = readInput2021("Day18.test")
     checkEquals(SN(SN(SN(6, 6), SN(7, 6)), 9).toString(), "[[[6,6],[7,6]],9]")
     checkEquals(parseSnails("[[[6,6],[7,6]],9]").toString(), "[[[6,6],[7,6]],9]")
     val testReduceResult = "[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]"
@@ -68,7 +69,7 @@ fun main() {
     )
     checkEquals(part1(testInput), 4140)
 
-    val input = readInput("Day18")
+    val input = readInput2021("Day18")
     prcp(part1(input))
     checkEquals(part2(testInput), 3993)
     prcp(part2(input))
@@ -219,11 +220,12 @@ fun parseSnails(s: String): SN {
             '[' -> {
                 currPair = currPair.recurse()
             }
+
             ']' -> currPair = (currPair.parent as SnailBuilder?)!!
             ',' -> {} //do nothing
             else -> currPair.setNumber(char)
         }
     }
-    check(currPair == outerPair)
+    checkEquals(currPair, outerPair)
     return outerPair
 }

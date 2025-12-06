@@ -1,7 +1,8 @@
 package year2024
 
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 
 fun main() {
     class Cave(val name: String, val maxVisits: Int, val end: Boolean = false) {
@@ -93,13 +94,13 @@ fun main() {
 
     // test if implementation meets criteria from the description, like:
 
-    check(part1(readInput("Day12.test")) == 10)
-    check(part1(readInput("Day12.test2")) == 19)
-    check(part1(readInput("Day12.test3")) == 226)
-    check(part2(readInput("Day12.test")) == 36)
-    check(part2(readInput("Day12.test2")) == 103)
-    check(part2(readInput("Day12.test3")) == 3509)
-    val input = readInput("Day12")
+    checkEquals(part1(readInput2021("Day12.test")), 10)
+    checkEquals(part1(readInput2021("Day12.test2")), 19)
+    checkEquals(part1(readInput2021("Day12.test3")), 226)
+    checkEquals(part2(readInput2021("Day12.test")), 36)
+    checkEquals(part2(readInput2021("Day12.test2")), 103)
+    checkEquals(part2(readInput2021("Day12.test3")), 3509)
+    val input = readInput2021("Day12")
     prcp(part1(input))
     prcp(part2(input))
 }

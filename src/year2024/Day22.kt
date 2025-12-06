@@ -3,7 +3,8 @@ package year2024
 import Pos3D
 import checkEquals
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 import java.lang.Math.max
 import java.lang.Math.min
 
@@ -73,11 +74,11 @@ fun main() {
 // test if implementation meets criteria from the description, like:
     val day = 22
     println("Starting Day ${day}")
-    val testInput = readInput("Day${day}.test")
+    val testInput = readInput2021("Day${day}.test")
     checkEquals(part1(testInput), 590784)
-    val input = readInput("Day${day}")
+    val input = readInput2021("Day${day}")
     prcp(part1(input))
-    val testInput2 = readInput("Day${day}.test2")
+    val testInput2 = readInput2021("Day${day}.test2")
 //    checkEquals(part2(testInput2), 2758514936282235)
     prcp(part2(input))
 }

@@ -4,7 +4,8 @@ import Pos3D
 import getNeighborLocations
 import getNeighbors
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 
 fun main() {
     fun exploreValleyRec(matrix: Array<IntArray>, row: Int, col: Int, selector: (Int) -> Boolean): List<Int> {
@@ -53,11 +54,11 @@ fun main() {
     }
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day09.test")
-    check(part1(testInput) == 15)
-    check(part2(testInput) == 1134)
+    val testInput = readInput2021("Day09.test")
+    checkEquals(part1(testInput), 15)
+    checkEquals(part2(testInput), 1134)
 
-    val input = readInput("Day09")
+    val input = readInput2021("Day09")
     prcp(part1(input))
     prcp(part2(input))
 }

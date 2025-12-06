@@ -1,7 +1,8 @@
 package year2024
 
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 
 fun main() {
     fun part1(input: List<String>): Int {
@@ -25,10 +26,10 @@ fun main() {
     }
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day01.test")
-    check(part1(testInput) == 7)
+    val testInput = readInput2021("Day01.test")
+    checkEquals(part1(testInput), 7)
 
-    val input = readInput("Day01")
+    val input = readInput2021("Day01")
     prcp(part1(input))
     prcp(part2(input))
 }

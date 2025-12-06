@@ -10,7 +10,11 @@ import java.security.MessageDigest
 /**
  * Reads lines from the given input txt file.
  */
-fun readInput(name: String): List<String> = File("input", "$name.txt").readLines().map { it.trim() }
+fun readInput2021(name: String): List<String> {
+    val day = Regex("\\d+").find(name)!!.value
+    val paddedDay = day.padStart(2, '0')
+    return File("input/2021", "${name.replace(day, paddedDay)}.txt").readLines().map { it.trim() }
+}
 
 /**
  * Converts string to md5 hash.

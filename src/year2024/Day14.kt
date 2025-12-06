@@ -1,7 +1,8 @@
 package year2024
 
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 import kotlin.text.iterator
 
 typealias CountMap = HashMap<Char, Long>
@@ -100,11 +101,11 @@ fun main() {
     }
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day14.test")
-    check(part1(testInput) == 1588.toLong())
-    check(solvePolymerization(testInput, 10) == 1588.toLong())
-    val input = readInput("Day14")
+    val testInput = readInput2021("Day14.test")
+    checkEquals(part1(testInput), 1588.toLong())
+    checkEquals(solvePolymerization(testInput, 10), 1588.toLong())
+    val input = readInput2021("Day14")
     prcp(part1(input))
-    check(part2(testInput) == 2188189693529)
+    checkEquals(part2(testInput), 2188189693529)
     prcp(part2(input))
 }

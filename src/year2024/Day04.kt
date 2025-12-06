@@ -1,7 +1,8 @@
 package year2024
 
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 import rowCols
 
 fun main() {
@@ -72,11 +73,11 @@ fun main() {
     }
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day04.test")
-    check(part1(testInput) == 4512)
-    check(part2(testInput) == 1924)
+    val testInput = readInput2021("Day04.test")
+    checkEquals(part1(testInput), 4512)
+    checkEquals(part2(testInput), 1924)
 
-    val input = readInput("Day04")
+    val input = readInput2021("Day04")
     prcp(part1(input))
     prcp(part2(input))
 }

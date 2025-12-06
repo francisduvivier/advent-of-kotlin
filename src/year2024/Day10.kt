@@ -1,7 +1,8 @@
 package year2024
 
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 import kotlin.text.iterator
 
 fun main() {
@@ -79,11 +80,11 @@ fun main() {
     }
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day10.test")
-    check(part1(testInput) == 26397)
-    check(part2(testInput) == 288957.toLong())
+    val testInput = readInput2021("Day10.test")
+    checkEquals(part1(testInput), 26397)
+    checkEquals(part2(testInput), 288957.toLong())
 
-    val input = readInput("Day10")
+    val input = readInput2021("Day10")
     prcp(part1(input))
     prcp(part2(input))
 }

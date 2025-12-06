@@ -2,7 +2,8 @@ package year2024
 
 import indexes
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 
 fun main() {
     fun compare1s(input: List<String>, i: Int): Int {
@@ -49,11 +50,11 @@ fun main() {
 
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day03.test")
-    check(part1(testInput) == 198)
-    check(part2(testInput) == 230)
+    val testInput = readInput2021("Day03.test")
+    checkEquals(part1(testInput), 198)
+    checkEquals(part2(testInput), 230)
 
-    val input = readInput("Day03")
+    val input = readInput2021("Day03")
     prcp(part1(input))
     prcp(part2(input))
 }

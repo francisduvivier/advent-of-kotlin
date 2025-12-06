@@ -1,7 +1,8 @@
 package year2024
 
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 import rowCols
 import java.awt.geom.Line2D
 
@@ -50,11 +51,11 @@ fun main() {
         return findCrossingTiles(lines)
     }
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day05.test")
-    check(part1(testInput) == 5)
-    check(part2(testInput) == 12)
+    val testInput = readInput2021("Day05.test")
+    checkEquals(part1(testInput), 5)
+    checkEquals(part2(testInput), 12)
 
-    val input = readInput("Day05")
+    val input = readInput2021("Day05")
     prcp(part1(input))
     prcp(part2(input))
 }

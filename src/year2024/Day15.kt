@@ -3,7 +3,8 @@ package year2024
 import checkEquals
 import getNeighborLocations
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 
 typealias CostCalcFun = (toRow: Int, toCol: Int, fromRow: Int, fromCol: Int) -> Int
 
@@ -39,7 +40,8 @@ fun main() {
         var matrix = input.map { it.toCharArray().map { it.digitToInt() } }
         if (multiplicator > 1) {
             matrix = List(matrix.size * multiplicator, { row ->
-                List(matrix[0].size * multiplicator,
+                List(
+                    matrix[0].size * multiplicator,
                     { col ->
                         (matrix[row % matrix.size][col % matrix[0].size] + (row / matrix.size) + (col / matrix[0].size)) % 9
                     })
@@ -73,16 +75,16 @@ fun main() {
     }
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day15.test")
-    check(part1(testInput) == 40.toLong())
+    val testInput = readInput2021("Day15.test")
+    checkEquals(part1(testInput), 40.toLong())
     println("part 1 check passed")
 
-    val input = readInput("Day15")
+    val input = readInput2021("Day15")
     prcp(part1(input))
     val testInput3 = listOf("8")
     val processedTestInput1 = processInput(testInput3, 5)
     checkEquals("89123", processedTestInput1[0].joinToString(""))
-    val multipliedInput = readInput("Day15.test2")
+    val multipliedInput = readInput2021("Day15.test2")
     val processedTestInput = processInput(testInput, 5)
     checkEquals(multipliedInput[0], processedTestInput[0].joinToString(""))
     checkEquals(part1(multipliedInput), 315.toLong())

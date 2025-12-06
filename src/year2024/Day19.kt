@@ -3,7 +3,8 @@ package year2024
 import Pos3D
 import checkEquals
 import prcp
-import readInput
+import readInput2021
+import checkEquals
 
 
 class RawScannerData(val id: Int) : ArrayList<Pos3D>() {
@@ -155,9 +156,9 @@ fun main() {
 
     val day = 19
     println("Starting Day${day}")
-    val testInput = readInput("Day${day}.test")
+    val testInput = readInput2021("Day${day}.test")
     checkEquals(part1(testInput), 79)
-    val input = readInput("Day${day}")
+    val input = readInput2021("Day${day}")
     prcp(part1(input))
     checkEquals(part2(testInput), 3621)
     prcp(part2(input))
