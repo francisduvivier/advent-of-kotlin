@@ -1,3 +1,9 @@
+package year2025
+
+import checkEquals
+import prcp
+import readInput
+
 fun getBestJoltage(input: String, amount: Int = 2): String {
     if(amount == 0) return ""
     val numbersChars = input.split("").slice(1..input.length)
@@ -18,11 +24,11 @@ fun main() {
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day03.test")
-    check(part1(testInput) == 357L)
+    checkEquals(part1(testInput), 357L)
     val input = readInput("Day03")
     prcp(part1(input))
 
 
-    check(part2(testInput) == 3121910778619L)
+    checkEquals(part2(testInput), 3121910778619L)
     prcp(part2(input))
 }

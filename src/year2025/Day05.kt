@@ -1,3 +1,9 @@
+package year2025
+
+import checkEquals
+import prcp
+import readInput
+
 fun main() {
     fun part1(input: List<String>): Long {
         val (freshRanges, ingredients) = parseInput(input)
@@ -5,13 +11,13 @@ fun main() {
     }
 
     fun part2(input: List<String>): Long {
-        check(countNewRanges(1L..3, listOf(1L..3)) == 0L)
-        check(countNewRanges(1L..3, listOf(1L..2)) == 1L)
-        check(countNewRanges(1L..3, listOf(2L..3)) == 1L)
-        check(countNewRanges(1L..2, listOf(2L..3)) == 1L)
-        check(countNewRanges(3L..4, listOf(2L..3)) == 1L)
-        check(countNewRanges(3L..3, listOf(2L..3)) == 0L)
-        check(countNewRanges(3L..3, listOf(2L..2)) == 1L)
+        checkEquals(countNewRanges(1L..3, listOf(1L..3)), 0L)
+        checkEquals(countNewRanges(1L..3, listOf(1L..2)), 1L)
+        checkEquals(countNewRanges(1L..3, listOf(2L..3)), 1L)
+        checkEquals(countNewRanges(1L..2, listOf(2L..3)), 1L)
+        checkEquals(countNewRanges(3L..4, listOf(2L..3)), 1L)
+        checkEquals(countNewRanges(3L..3, listOf(2L..3)), 0L)
+        checkEquals(countNewRanges(3L..3, listOf(2L..2)), 1L)
 
         val (freshRanges, _) = parseInput(input)
         val doneRanges = mutableListOf<LongRange>()
@@ -29,13 +35,13 @@ fun main() {
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day05.test")
-    check(part1(testInput) == 3L)
+    checkEquals(part1(testInput), 3L)
     val input = readInput("Day05")
     prcp(part1(input))
 
 
-    check(part2(testInput) == 14L)
-    check(part2(testInput + testInput) == 14L)
+    checkEquals(part2(testInput), 14L)
+    checkEquals(part2(testInput + testInput), 14L)
     prcp(part2(input))
 }
 

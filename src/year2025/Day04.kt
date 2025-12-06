@@ -1,3 +1,12 @@
+package year2025
+
+import checkEquals
+import get8NeighborLocations
+import prcp
+import readInput
+import rowCols
+import toCharMatrix
+
 fun main() {
     fun part1(input: List<String>): Long {
         val matrix = toCharMatrix(input)
@@ -30,11 +39,11 @@ fun main() {
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day04.test")
-    check(part1(testInput) == 13L)
+    checkEquals(part1(testInput), 13L)
     val input = readInput("Day04")
     prcp(part1(input))
 
 
-    check(part2(testInput) == 43L)
+    checkEquals(part2(testInput), 43L)
     prcp(part2(input))
 }

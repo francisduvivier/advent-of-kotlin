@@ -1,3 +1,8 @@
+package year2025
+
+import checkEquals
+import prcp
+
 import java.io.File
 
 fun readInputUnTrimmed(name: String): List<String> = File("input", "$name.txt").readLines()
@@ -48,12 +53,12 @@ fun main() {
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInputUnTrimmed("Day06.test")
-    check(part1(testInput) == 4277556L)
+    checkEquals(part1(testInput), 4277556L)
     val input = readInputUnTrimmed("Day06")
     prcp(part1(input))
 
 
-    check(part2(testInput) == 3263827L)
+    checkEquals(part2(testInput), 3263827L)
     prcp(part2(input))
 }
 

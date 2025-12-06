@@ -1,8 +1,14 @@
+package year2025
+
+import checkEquals
+import prcp
+import readInput
+
 fun main() {
     fun part1(input: List<String>): Long {
         val allInvalids = mutableListOf<Long>()
-        for(line in input) {
-            val (a,b) = line.split("-").map { it.toLong() }
+        for (line in input) {
+            val (a, b) = line.split("-").map { it.toLong() }
             val invalids: List<Long> = findInvalidsInRange(a, b)
             allInvalids.addAll(invalids)
         }
@@ -11,22 +17,23 @@ fun main() {
 
     fun part2(input: List<String>): Long {
         val allInvalids = mutableListOf<Long>()
-        for(line in input) {
-            val (a,b) = line.split("-").map { it.toLong() }
+        for (line in input) {
+            val (a, b) = line.split("-").map { it.toLong() }
             val invalids: List<Long> = findInvalidsInRange2(a, b)
             allInvalids.addAll(invalids)
         }
-        return allInvalids.sum()    }
+        return allInvalids.sum()
+    }
 
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day02.test")
-    check(part1(testInput) == 1227775554L)
+    checkEquals(part1(testInput), 1227775554L)
     val input = readInput("Day02")
     prcp(part1(input))
 
 
-    check(part2(testInput) == 4174379265L)
+    checkEquals(part2(testInput), 4174379265L)
     prcp(part2(input))
 }
 
