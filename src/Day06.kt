@@ -1,12 +1,14 @@
 import util.prcp
-import util.readInput
-import util.rowCols
+import java.io.File
+
+
+fun readInputUnTrimmed(name: String): List<String> = File("input", "$name.txt").readLines()
 
 
 fun main() {
     fun part1(input: List<String>): Long {
         val matrixPart = input.slice(0..<input.lastIndex)
-        val operators = input[input.lastIndex].split(Regex("\\s+"))
+        val operators = input[input.lastIndex].trim().split(Regex("\\s+"))
 
         val matrix = matrixPart.map { it.trim().split(Regex("\\s+")).map { it.toLong() } }
         return operators.mapIndexed { col: Int, op ->
@@ -15,25 +17,46 @@ fun main() {
                 val sum = values.sum()
                 return@mapIndexed sum
             } else {
-                val multiplied = values.reduce { acc, next -> acc * next }
+                val multiplied = getMultiplied(values)
                 return@mapIndexed multiplied
             }
         }.sum()
     }
 
     fun part2(input: List<String>): Long {
-        TODO()
+        val matrixPart = input.slice(0..<input.lastIndex)
+        val operators = input[input.lastIndex].trim().split(Regex("\\s+"))
+        val operatorSpaces = input[input.lastIndex].slice(1..input[input.lastIndex].lastIndex).split(Regex("[*+]+"))
+        var totalIndex = 0
+        return operators.mapIndexed { col: Int, op ->
+            val columnSize = operatorSpaces[col].length
+            val valuesWithSpaces = matrixPart.map { it.slice(totalIndex..totalIndex + columnSize) }
+            totalIndex += columnSize + 1
+            val numbers =
+                (0..columnSize).map { subCol ->
+                    val subColValue = valuesWithSpaces.map { it[subCol] }.joinToString("").trim()
+                    subColValue
+                }.filter { it.isNotBlank() }.map { it.toLong() }
+            if (op == "+") {
+                val sum = numbers.sum()
+                return@mapIndexed sum
+            } else {
+                val multiplied = getMultiplied(numbers)
+                return@mapIndexed multiplied
+            }
+        }.sum()
     }
 
 
     // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day06.test")
+    val testInput = readInputUnTrimmed("Day06.test")
     check(part1(testInput) == 4277556L)
-    val input = readInput("Day06")
+    val input = readInputUnTrimmed("Day06")
     prcp(part1(input))
 
 
-//    check(part2(testInput) == 14L)
-//    check(part2(testInput + testInput) == 14L)
-//    prcp(part2(input))
+    check(part2(testInput) == 3263827L)
+    prcp(part2(input))
 }
+
+private fun getMultiplied(numbers: List<Long>): Long = numbers.reduce { acc, next -> acc * next }
