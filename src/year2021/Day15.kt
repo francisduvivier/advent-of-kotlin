@@ -1,10 +1,9 @@
-package year2024
+package year2021
 
 import checkEquals
 import getNeighborLocations
 import prcp
 import readInput2021
-import checkEquals
 
 typealias CostCalcFun = (toRow: Int, toCol: Int, fromRow: Int, fromCol: Int) -> Int
 

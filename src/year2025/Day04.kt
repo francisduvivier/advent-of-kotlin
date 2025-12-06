@@ -1,10 +1,3 @@
-import util.get8NeighborLocations
-import util.prcp
-import util.readInput
-import util.rowCols
-import util.toCharMatrix
-
-
 fun main() {
     fun part1(input: List<String>): Long {
         val matrix = toCharMatrix(input)

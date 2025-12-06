@@ -1,4 +1,3 @@
-package util
 
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard

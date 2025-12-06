@@ -1,11 +1,3 @@
-package year2024
-
-import Pos3D
-import getNeighborLocations
-import getNeighbors
-import prcp
-import readInput2021
-import checkEquals
 
 fun main() {
     fun exploreValleyRec(matrix: Array<IntArray>, row: Int, col: Int, selector: (Int) -> Boolean): List<Int> {

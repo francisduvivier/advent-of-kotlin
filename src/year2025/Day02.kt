@@ -1,8 +1,3 @@
-import util.prcp
-import util.readInput
-
-
-
 fun main() {
     fun part1(input: List<String>): Long {
         val allInvalids = mutableListOf<Long>()

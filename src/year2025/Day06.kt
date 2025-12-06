@@ -1,6 +1,4 @@
-import util.prcp
 import java.io.File
-
 
 fun readInputUnTrimmed(name: String): List<String> = File("input", "$name.txt").readLines()
 

@@ -1,21 +1,6 @@
-package year2024
-
-import Pos3D
-import checkEquals
-import prcp
-import readInput2021
-import checkEquals
-
-
 class RawScannerData(val id: Int) : ArrayList<Pos3D>() {
     override fun toString(): String {
         return "id [${id}]"
-    }
-}
-
-class Orientation(val direction: Facing, val rotation: Rotation) {
-    fun mutatePos(pos3D: Pos3D): Pos3D {
-        return rotation.mutatePos(direction.mutatePos(pos3D))
     }
 }
 
@@ -27,28 +12,6 @@ class MappedScanner(val rawScannerData: RawScannerData, val orientation: Orienta
     }
 }
 
-enum class Rotation(val xMult: Int, val yMult: Int, val zMult: Int = 1) {
-    R1(1, 1), R2(1, -1), R3(-1, 1), R4(-1, -1),
-    R5(1, 1, -1), R6(1, -1, -1), R7(-1, 1, -1), R8(-1, -1, -1);
-
-    fun mutatePos(pos: Pos3D): Pos3D {
-        return Pos3D(pos.x * xMult, pos.y * yMult, pos.z * zMult)
-    }
-}
-
-enum class Facing(val mutator: (Pos3D) -> Pos3D) {
-    F1({ Pos3D(it.x, it.y, it.z) }),
-    F2({ Pos3D(it.x, it.z, it.y) }),
-    F3({ Pos3D(it.z, it.x, it.y) }),
-    F4({ Pos3D(it.z, it.y, it.x) }),
-    F5({ Pos3D(it.y, it.x, it.z) }),
-    F6({ Pos3D(it.y, it.z, it.x) });
-
-    fun mutatePos(pos: Pos3D): Pos3D {
-        return mutator(pos)
-    }
-}
-
 val allOrientations = Facing.values().map { dir3d -> Rotation.values().map { Orientation(dir3d, it) } }.flatten()
 
 
@@ -57,7 +20,7 @@ private fun normalizeCoords(
     orientation: Orientation,
     scannerPos: Pos3D
 ): Pos3D {
-    val orientedCoords = orient(rawBeacon, orientation)
+    val orientedCoords = rawBeacon.orient(orientation)
     val mappedCoords = orientedCoords.add(scannerPos)
     return mappedCoords
 }

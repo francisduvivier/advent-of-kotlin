@@ -1,9 +1,8 @@
-package year2024
+package year2021
 
 import checkEquals
 import prcp
 import readInput2021
-import checkEquals
 
 typealias SN = PairOrNumber
 

@@ -1,10 +1,9 @@
-package year2024
+package year2021
 
 import Pos3D
 import checkEquals
 import prcp
 import readInput2021
-import checkEquals
 import java.lang.Math.max
 import java.lang.Math.min
 

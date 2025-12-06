@@ -1,4 +1,4 @@
-package year2024
+package year2021
 
 import prcp
 import readInput2021

@@ -1,6 +1,3 @@
-import util.prcp
-import util.readInput
-
 fun getBestJoltage(input: String, amount: Int = 2): String {
     if(amount == 0) return ""
     val numbersChars = input.split("").slice(1..input.length)

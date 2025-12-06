@@ -1,7 +1,3 @@
-import util.prcp
-import util.readInput
-
-
 fun main() {
     fun part1(input: List<String>): Long {
         val (freshRanges, ingredients) = parseInput(input)

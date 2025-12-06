@@ -1,5 +1,3 @@
-package util
-
 import kotlin.math.absoluteValue
 
 
