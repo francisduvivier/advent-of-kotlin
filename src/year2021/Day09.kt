@@ -1,4 +1,3 @@
-
 fun main() {
     fun exploreValleyRec(matrix: Array<IntArray>, row: Int, col: Int, selector: (Int) -> Boolean): List<Int> {
         val value = matrix[row][col]
@@ -8,7 +7,7 @@ fun main() {
         matrix[row][col] = -1
         val neighbors = ArrayList<Int>()
         neighbors.add(value)
-        for ((neighborRow, neighborCol) in getNeighborLocations(matrix, row, col)) {
+        for ((neighborRow, neighborCol) in getNeighborLocations(toMatrix(matrix), row, col)) {
             neighbors.addAll(exploreValleyRec(matrix, neighborRow, neighborCol, selector))
         }
         return neighbors

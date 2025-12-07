@@ -1,8 +1,3 @@
-fun toMatrix(matrix: List<String>): Array<Array<Char>> = matrix.map {
-    val typed: Array<Char> = it.toCharArray().toTypedArray()
-    typed
-}.toTypedArray()
-
 fun <T> get8NeighborLocations(matrix: List<List<T>>, row: Int, col: Int): List<Pair<Int, Int>> {
     val nLocs = getNeighborLocations(matrix, row, col).toMutableList()
     if (row > 0 && col > 0) {
@@ -20,24 +15,9 @@ fun <T> get8NeighborLocations(matrix: List<List<T>>, row: Int, col: Int): List<P
     return nLocs
 }
 
-fun <T> get8NeighborLocations(matrix: Array<Array<T>>, row: Int, col: Int): List<Pair<Int, Int>> {
-    return get8NeighborLocations(toMatrix(matrix), row, col)
-}
-
-fun get8NeighborLocations(matrix: Array<IntArray>, row: Int, col: Int): List<Pair<Int, Int>> {
-    return get8NeighborLocations(toMatrix(matrix), row, col)
-}
-
-fun getNeighborLocations(matrix: Array<IntArray>, row: Int, col: Int): List<Pair<Int, Int>> {
-    return getNeighborLocations(toMatrix(matrix), row, col)
-}
-
-fun toMatrix(matrix: Array<IntArray>): List<List<Int>> = matrix.map { it.toList() }
-fun <T> toMatrix(matrix: Array<Array<T>>): List<List<T>> = matrix.map { it.toList() }
-
-fun <T> getNeighborLocations(matrix: Array<Array<T>>, row: Int, col: Int): List<Pair<Int, Int>> {
-    return getNeighborLocations(toMatrix(matrix), row, col)
-}
+fun toMatrix(matrix: List<String>): List<MutableList<Char>> = matrix.map { it.toCharArray().toMutableList() }
+fun toMatrix(matrix: Array<IntArray>): List<MutableList<Int>> = matrix.map { it.toMutableList() }
+fun <T> toMatrix(matrix: Array<Array<T>>): List<MutableList<T>> = matrix.map { it.toMutableList() }
 
 fun getNeighborLocations(matrix: List<List<*>>, row: Int, col: Int): List<Pair<Int, Int>> {
     val nLocs = ArrayList<Pair<Int, Int>>()
@@ -58,7 +38,7 @@ fun getNeighborLocations(matrix: List<List<*>>, row: Int, col: Int): List<Pair<I
 }
 
 fun getNeighbors(matrix: Array<IntArray>, row: Int, col: Int): List<Int> {
-    return getNeighborLocations(matrix, row, col).map { (row, col) -> matrix[row][col] }
+    return getNeighborLocations(toMatrix(matrix), row, col).map { (row, col) -> matrix[row][col] }
 }
 
 fun rowCols(matrix: Array<IntArray>): List<Pair<Int, Int>> {

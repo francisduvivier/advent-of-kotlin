@@ -5,6 +5,7 @@ import prcp
 import readInput2021
 import checkEquals
 import rowCols
+import toMatrix
 
 fun main() {
     fun increase8Neighbors(board: Array<IntArray>, row: Int, col: Int): Int {
@@ -12,7 +13,7 @@ fun main() {
             return 0
         }
         board[row][col] = 0
-        val all8NeighborLocs = get8NeighborLocations(board, row, col)
+        val all8NeighborLocs = get8NeighborLocations(toMatrix(board), row, col)
         for ((nRow, nCol) in all8NeighborLocs) {
             val nb = board[nRow][nCol]
             if ((nb % 10) != 0) { // 9 will be handled in other loop, 0 is already fired
