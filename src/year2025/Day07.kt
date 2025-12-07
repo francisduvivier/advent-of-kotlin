@@ -23,8 +23,34 @@ fun main() {
         return splits
     }
 
-    fun part2(input: List<String>): Int {
-        return -1
+    fun part2(input: List<String>): Long {
+        val solMap = mutableMapOf<String, Long>()
+        fun getPossiblePathsRec(lineIndex: Int, beamIndex: Int): Long {
+            if (lineIndex == input.lastIndex) {
+                return 1
+            }
+            val line = input[lineIndex]
+            if (beamIndex < 0 || beamIndex > line.lastIndex) {
+                return 0
+            }
+            val cacheKey = "$lineIndex,$beamIndex"
+            if (solMap.containsKey(cacheKey)) {
+                return solMap.getValue(cacheKey).toLong()
+            }
+            val nextLineIndex = lineIndex + 1
+            val result = if (line[beamIndex] == '.') {
+                getPossiblePathsRec(nextLineIndex, beamIndex)
+            } else {
+                getPossiblePathsRec(nextLineIndex, beamIndex - 1) + getPossiblePathsRec(
+                    nextLineIndex,
+                    beamIndex + 1
+                )
+            }
+            solMap[cacheKey] = result
+            return result
+        }
+
+        return getPossiblePathsRec(1, input[0].indexOf('S'))
     }
 
     // test if implementation meets criteria from the description, like:
@@ -34,6 +60,6 @@ fun main() {
     checkEquals(part1(testInput), 21)
     val input = readInput("Day$day")
     prcp(part1(input))
-    checkEquals(part2(testInput), 0)
+    checkEquals(part2(testInput), 40)
     prcp(part2(input))
 }
