@@ -5,11 +5,11 @@ import get8NeighborLocations
 import prcp
 import readInput
 import rowCols
-import toCharMatrix
+import toMatrix
 
 fun main() {
     fun part1(input: List<String>): Long {
-        val matrix = toCharMatrix(input)
+        val matrix = toMatrix(input)
 
         val paperRolls = rowCols(matrix).filter { matrix[it.first][it.second] == '@' }
         return paperRolls.count {
@@ -20,7 +20,7 @@ fun main() {
     }
 
     fun part2(input: List<String>): Long {
-        val matrix = toCharMatrix(input)
+        val matrix = toMatrix(input)
         var totalRemoved = 0L
         var removed = 0
         do {

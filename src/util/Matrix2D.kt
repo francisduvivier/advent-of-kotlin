@@ -1,14 +1,9 @@
-fun get8NeighborLocations(matrix: List<String>, row: Int, col: Int): List<Pair<Int, Int>> {
-    val charMatrix = toCharMatrix(matrix)
-    return get8NeighborLocations(charMatrix, row,col)
-}
-
-fun toCharMatrix(matrix: List<String>): Array<Array<Char>> = matrix.map {
+fun toMatrix(matrix: List<String>): Array<Array<Char>> = matrix.map {
     val typed: Array<Char> = it.toCharArray().toTypedArray()
     typed
 }.toTypedArray()
 
-fun get8NeighborLocations(matrix: Array<Array<Char>>, row: Int, col: Int): List<Pair<Int, Int>> {
+fun <T> get8NeighborLocations(matrix: List<List<T>>, row: Int, col: Int): List<Pair<Int, Int>> {
     val nLocs = getNeighborLocations(matrix, row, col).toMutableList()
     if (row > 0 && col > 0) {
         nLocs.add(Pair(row - 1, col - 1))
@@ -23,59 +18,25 @@ fun get8NeighborLocations(matrix: Array<Array<Char>>, row: Int, col: Int): List<
         nLocs.add(Pair(row - 1, col + 1))
     }
     return nLocs
+}
+
+fun <T> get8NeighborLocations(matrix: Array<Array<T>>, row: Int, col: Int): List<Pair<Int, Int>> {
+    return get8NeighborLocations(toMatrix(matrix), row, col)
 }
 
 fun get8NeighborLocations(matrix: Array<IntArray>, row: Int, col: Int): List<Pair<Int, Int>> {
-    val nLocs = getNeighborLocations(matrix, row, col).toMutableList()
-    if (row > 0 && col > 0) {
-        nLocs.add(Pair(row - 1, col - 1))
-    }
-    if (row < matrix.size - 1 && col < matrix[row].size - 1) {
-        nLocs.add(Pair(row + 1, col + 1))
-    }
-    if (col > 0 && row < matrix.size - 1) {
-        nLocs.add(Pair(row + 1, col - 1))
-    }
-    if (col < matrix[row].size - 1 && row > 0) {
-        nLocs.add(Pair(row - 1, col + 1))
-    }
-    return nLocs
+    return get8NeighborLocations(toMatrix(matrix), row, col)
 }
 
 fun getNeighborLocations(matrix: Array<IntArray>, row: Int, col: Int): List<Pair<Int, Int>> {
-    val nLocs = ArrayList<Pair<Int, Int>>()
-    if (row > 0) {
-        nLocs.add(Pair(row - 1, col))
-    }
-
-    if (row < matrix.size - 1) {
-        nLocs.add(Pair(row + 1, col))
-    }
-    if (col > 0) {
-        nLocs.add(Pair(row, col - 1))
-    }
-    if (col < matrix[row].size - 1) {
-        nLocs.add(Pair(row, col + 1))
-    }
-    return nLocs
+    return getNeighborLocations(toMatrix(matrix), row, col)
 }
 
-fun getNeighborLocations(matrix: Array<Array<Char>>, row: Int, col: Int): List<Pair<Int, Int>> {
-    val nLocs = ArrayList<Pair<Int, Int>>()
-    if (row > 0) {
-        nLocs.add(Pair(row - 1, col))
-    }
+fun toMatrix(matrix: Array<IntArray>): List<List<Int>> = matrix.map { it.toList() }
+fun <T> toMatrix(matrix: Array<Array<T>>): List<List<T>> = matrix.map { it.toList() }
 
-    if (row < matrix.size - 1) {
-        nLocs.add(Pair(row + 1, col))
-    }
-    if (col > 0) {
-        nLocs.add(Pair(row, col - 1))
-    }
-    if (col < matrix[row].size - 1) {
-        nLocs.add(Pair(row, col + 1))
-    }
-    return nLocs
+fun <T> getNeighborLocations(matrix: Array<Array<T>>, row: Int, col: Int): List<Pair<Int, Int>> {
+    return getNeighborLocations(toMatrix(matrix), row, col)
 }
 
 fun getNeighborLocations(matrix: List<List<*>>, row: Int, col: Int): List<Pair<Int, Int>> {
