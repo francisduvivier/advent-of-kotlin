@@ -43,13 +43,13 @@ fun jk2jt(junctionTriple: Triple<Int, Int, Int>): String {
 fun getConnectionPair(
     first: Triple<Int, Int, Int>,
     second: Triple<Int, Int, Int>
-): Pair<Pair<Triple<Int, Int, Int>, Triple<Int, Int, Int>>, Int> {
+): Pair<Pair<Triple<Int, Int, Int>, Triple<Int, Int, Int>>, Long> {
     val sortedJunctions = arrayOf(first, second).sortedBy { jk2jt(it) }
     return Pair(Pair(sortedJunctions[0], sortedJunctions[1]), jDistance(first, second))
 }
 
-fun jDistance(first: Triple<Int, Int, Int>, second: Triple<Int, Int, Int>): Int {
-    return first.toList().mapIndexed { index: Int, c: Int -> c - second.toList()[index] }.sumOf { it * it }
+fun jDistance(first: Triple<Int, Int, Int>, second: Triple<Int, Int, Int>): Long {
+    return first.toList().mapIndexed { index: Int, c: Int -> c - second.toList()[index] }.map { it.toLong() }.sumOf { it * it }
 }
 
 fun addClosest(
@@ -58,38 +58,14 @@ fun addClosest(
 ): List<Int> {
     val distanceSet =
         junctions.flatMap { j1 -> junctions.filter { it != j1 }.map { getConnectionPair(j1, it) } }.toSet()
-    val closest = distanceSet.sortedBy { it.second }.map { it.first }.toSet()
-    val connections = mutableMapOf<Triple<Int, Int, Int>, MutableSet<Triple<Int, Int, Int>>>()
-    var amountAdded = 0
+    val closest = distanceSet.sortedBy { it.second }.map { it.first }
     val circuitMap = mutableMapOf<Triple<Int, Int, Int>, MutableSet<Triple<Int, Int, Int>>>()
     junctions.forEach { junction -> circuitMap[junction] = mutableSetOf(junction)}
-    for (closePair in closest) {
-        if (amountAdded++ >= amount) {
-            break
-        }
-        if (circuitMap[closePair.first] === circuitMap[closePair.second]) {
-            continue
-        }
-        addConnection(connections, closePair)
-        addConnection(connections, Pair(closePair.second, closePair.first))
-
+    for (closePair in closest.slice(0..<amount)) {
         val circuit = circuitMap[closePair.first]!!
-        val all =
-            circuitMap[closePair.first]!! + circuitMap[closePair.second]!!
-        all.forEach { circuitMap[it] = circuit; circuit.add(it) }
-   
+        circuitMap[closePair.second]!!.forEach { circuitMap[it] = circuit; circuit.add(it) }
     }
     val circuitSet = circuitMap.values.toSet()
     val allSizes = circuitSet.map { it.size }.sortedDescending().toList()
     return allSizes.slice(0..<3)
-}
-
-fun addConnection(
-    connections: MutableMap<Triple<Int, Int, Int>, MutableSet<Triple<Int, Int, Int>>>,
-    it: Pair<Triple<Int, Int, Int>, Triple<Int, Int, Int>>
-) {
-    if (!connections.containsKey(it.first)) {
-        connections[it.first] = mutableSetOf()
-    }
-    connections[it.first]!!.add(it.second)
 }
