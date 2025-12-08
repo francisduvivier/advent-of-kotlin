@@ -3,8 +3,6 @@ package year2025
 import checkEquals
 import prcp
 import readInput
-import toMatrix
-import kotlin.math.absoluteValue
 
 fun main() {
 
@@ -16,7 +14,24 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return 0
+        val junctions = input.map { jk2jt(it) }.toSet()
+        assert(junctions.size == input.size)
+        val distanceSet =
+            junctions.flatMap { j1 -> junctions.filter { it != j1 }.map { getConnectionPair(j1, it) } }.toSet()
+        val closest = distanceSet.sortedByDescending { it.second }.map { it.first }.toMutableList()
+        val circuitMap = mutableMapOf<Triple<Int, Int, Int>, MutableSet<Triple<Int, Int, Int>>>()
+        junctions.forEach { junction -> circuitMap[junction] = mutableSetOf(junction)}
+        
+        while (true) {
+            val closePair = closest.removeLast()
+            val circuit = circuitMap[closePair.first]!!
+            circuitMap[closePair.second]!!.forEach { circuitMap[it] = circuit; circuit.add(it) }
+            if(circuitMap.values.toSet().size == 1){
+                return closePair.first.first * closePair.second.first
+            }
+        }
+     
+        throw Error("fail")
     }
 
     // test if implementation meets criteria from the description, like:
@@ -26,7 +41,7 @@ fun main() {
     checkEquals(part1(testInput, 10), 40)
     val input = readInput("Day$day")
     prcp(part1(input, 1000))
-    checkEquals(part2(testInput), 0)
+    checkEquals(part2(testInput), 25272)
     prcp(part2(input))
 }
 
