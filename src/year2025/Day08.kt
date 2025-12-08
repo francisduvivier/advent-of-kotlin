@@ -62,28 +62,22 @@ fun addClosest(
     val connections = mutableMapOf<Triple<Int, Int, Int>, MutableSet<Triple<Int, Int, Int>>>()
     var amountAdded = 0
     val circuitMap = mutableMapOf<Triple<Int, Int, Int>, MutableSet<Triple<Int, Int, Int>>>()
+    junctions.forEach { junction -> circuitMap[junction] = mutableSetOf(junction)}
     for (closePair in closest) {
-        if (circuitMap[closePair.first] != null && circuitMap[closePair.first] == circuitMap[closePair.second]) {
+        if (amountAdded++ >= amount) {
+            break
+        }
+        if (circuitMap[closePair.first] === circuitMap[closePair.second]) {
             continue
         }
         addConnection(connections, closePair)
         addConnection(connections, Pair(closePair.second, closePair.first))
 
-        val connectedOthers = connections[closePair.first]
-        var circuit = connections[closePair.first]!!.firstNotNullOfOrNull { circuitMap[it] }
-        if (circuit == null) {
-            circuit = connections[closePair.second]!!.firstNotNullOfOrNull { circuitMap[it] }
-        }
-        if (circuit == null) {
-            circuit = mutableSetOf()
-        }
-        val connectedOthers2 = connections[closePair.first]
+        val circuit = circuitMap[closePair.first]!!
         val all =
-            connectedOthers2!!.toList() + listOf(closePair.second) + connectedOthers!!.toList() + listOf(closePair.first)
+            circuitMap[closePair.first]!! + circuitMap[closePair.second]!!
         all.forEach { circuitMap[it] = circuit; circuit.add(it) }
-        if (++amountAdded >= amount) {
-            break
-        }
+   
     }
     val circuitSet = circuitMap.values.toSet()
     val allSizes = circuitSet.map { it.size }.sortedDescending().toList()
