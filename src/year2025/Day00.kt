@@ -5,11 +5,11 @@ import prcp
 import readInput
 
 fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
+    fun part1(input: List<String>): Long {
+        return input.size.toLong()
     }
 
-    fun part2(input: List<String>): Int {
+    fun part2(input: List<String>): Long {
         return 0
     }
 
