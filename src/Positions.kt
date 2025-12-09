@@ -70,18 +70,25 @@ class Pos3D(val x: Int, val y: Int, val z: Int) {
 }
 
 
-
 data class Pos(val x: Long, val y: Long) {
     val pair = Pair(this.x, this.y)
-    constructor(pos: Pair<Long, Long>): this(pos.first, pos.second)
+
+    constructor(pos: Pair<Long, Long>) : this(pos.first, pos.second)
 
     // Inclusive
     fun isBetween(other1: Pos, other2: Pos): Boolean {
-        return sameX(listOf(other1, other2)) && this.yIsBetween(other1, other2) || sameY(listOf(other1, other2)) && this.xIsBetween(other1, other2)
+        return sameX(listOf(other1, other2)) && this.yIsBetween(other1, other2) || sameY(
+            listOf(
+                other1,
+                other2
+            )
+        ) && this.xIsBetween(other1, other2)
     }
 
     fun sameX(others: List<Pos>): Boolean = others.all { it.x == this.x }
+    fun sameX(other1: Pos, other2: Pos): Boolean = sameX(listOf(other1, other2))
     fun sameY(others: List<Pos>): Boolean = others.all { it.y == this.y }
+    fun sameY(other1: Pos, other2: Pos): Boolean = sameY(listOf(other1, other2))
 
     fun xIsBetween(other1: Pos, other2: Pos): Boolean {
         return numberIsBetween(other1.x, other2.x, x)
@@ -90,7 +97,16 @@ data class Pos(val x: Long, val y: Long) {
     fun yIsBetween(other1: Pos, other2: Pos): Boolean {
         return numberIsBetween(other1.y, other2.y, y)
     }
+
+    fun yIsBetweenExcl(other1: Pos, other2: Pos): Boolean {
+        return numberIsBetweenExcl(other1.y, other2.y, y)
+    }
 }
 
 private fun numberIsBetween(first: Long, second: Long, maybeBetween: Long): Boolean =
     (min(first, second)..max(first, second)).contains(maybeBetween)
+
+private fun numberIsBetweenExcl(first: Long, second: Long, maybeBetween: Long): Boolean =
+    ((min(first, second) + 1)..max(first, second)).contains(maybeBetween)
+
+  

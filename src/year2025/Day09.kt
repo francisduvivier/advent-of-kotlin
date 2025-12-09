@@ -13,22 +13,23 @@ fun surface(first: Pair<Long, Long>, second: Pair<Long, Long>): Long {
 
 fun isValid(square: Pair<Pos, Pos>, others: List<Pos>): Boolean {
     val squarePointsToCheck = listOf(Pos(square.first.x, square.second.y), Pos(square.second.x, square.first.y))
-    return squarePointsToCheck.all { isInside(it, others) }
+    val lines: List<Pair<Pos, Pos>> = others.mapIndexed { index, pos -> Pair(pos, others[(index + 1) % others.size]) }
+    return squarePointsToCheck.all { isInside(it, lines) }
 }
 
-fun isInside(pointToCheck: Pos, others: List<Pos>): Boolean {
-    val amountOfLinesCrossedRight = others.mapIndexed { index, pos -> Pair(pos, others[(index + 1) % others.size]) }
+fun isInside(pointToCheck: Pos, lines: List<Pair<Pos, Pos>>): Boolean {
+    val exactLineMatch = lines.any { pointToCheck.isBetween(it.first, it.second)  }
+    if(exactLineMatch) {
+        return true
+    }
+    val amountOfLinesCrossedRight = lines
         .count { crossesRight(pointToCheck, it) }
     return amountOfLinesCrossedRight % 2 == 1
 }
 
-fun crossesRight(pointToCheck: Pos, it: Pair<Pos, Pos>): Boolean {
-    val lineX = it.first.x
-    val isVertical = lineX == it.second.x
-    if(!isVertical) {
-        return false
-    }
-    return pointToCheck.yIsBetween(it.first, it.second) && pointToCheck.x <= lineX
+fun crossesRight(pointToCheck: Pos, boundaryLine: Pair<Pos, Pos>): Boolean {
+    val lineX = boundaryLine.first.x
+    return pointToCheck.yIsBetweenExcl(boundaryLine.first, boundaryLine.second) && pointToCheck.x <= lineX
 }
 
 fun main() {
