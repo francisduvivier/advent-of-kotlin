@@ -5,21 +5,22 @@ import checkEquals
 import prcp
 import readInput
 import kotlin.math.abs
+import kotlin.rem
+import kotlin.text.get
 
 fun surface(first: Pair<Long, Long>, second: Pair<Long, Long>): Long {
     return first.toList().mapIndexed { index: Int, c: Long -> abs(c - second.toList()[index]) + 1L }
         .reduce { acc, lng -> acc * lng }
 }
 
-fun isValid(square: Pair<Pos, Pos>, others: List<Pos>): Boolean {
+fun isValid(square: Pair<Pos, Pos>, lines: List<Pair<Pos, Pos>>): Boolean {
     val squarePointsToCheck = listOf(Pos(square.first.x, square.second.y), Pos(square.second.x, square.first.y))
-    val lines: List<Pair<Pos, Pos>> = others.mapIndexed { index, pos -> Pair(pos, others[(index + 1) % others.size]) }
     return squarePointsToCheck.all { isInside(it, lines) }
 }
 
 fun isInside(pointToCheck: Pos, lines: List<Pair<Pos, Pos>>): Boolean {
-    val exactLineMatch = lines.any { pointToCheck.isBetween(it.first, it.second)  }
-    if(exactLineMatch) {
+    val exactLineMatch = lines.any { pointToCheck.isBetween(it.first, it.second) }
+    if (exactLineMatch) {
         return true
     }
     val amountOfLinesCrossedRight = lines
@@ -29,7 +30,7 @@ fun isInside(pointToCheck: Pos, lines: List<Pair<Pos, Pos>>): Boolean {
 
 fun crossesRight(pointToCheck: Pos, boundaryLine: Pair<Pos, Pos>): Boolean {
     val lineX = boundaryLine.first.x
-    return pointToCheck.yIsBetweenExcl(boundaryLine.first, boundaryLine.second) && pointToCheck.x <= lineX
+    return pointToCheck.yIsBetweenExcl(boundaryLine.first, boundaryLine.second) && pointToCheck.x < lineX
 }
 
 fun main() {
@@ -49,8 +50,22 @@ fun main() {
         }
         val sortedPairs = posPairs.sortedByDescending { it.second }
         val others: List<Pos> = pairs.map { Pos(it) }
+        val lines: List<Pair<Pos, Pos>> =
+            others.mapIndexed { index, pos -> Pair(pos, others[(index + 1) % others.size]) }
+        val badLine = lines.find {
+            lines.filter { l -> l != it }.any { other ->
+                val badOther = other.first.sameY(it.toList() + listOf(other.second)) && (other.first.xIsBetween(
+                    it.first,
+                    it.second
+                ) || other.second.xIsBetween(it.first, it.second))
+                badOther
+            }
+        }
+        if (badLine != null) {
+            throw Exception("There should not be any overlapping lines")
+        }
         val solution = sortedPairs.find {
-            isValid(it.first, others)
+            isValid(it.first, lines)
         }
         return solution!!.second
     }
