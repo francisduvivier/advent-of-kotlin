@@ -5,8 +5,6 @@ import checkEquals
 import prcp
 import readInput
 import kotlin.math.abs
-import kotlin.rem
-import kotlin.text.get
 
 fun surface(first: Pair<Long, Long>, second: Pair<Long, Long>): Long {
     return first.toList().mapIndexed { index: Int, c: Long -> abs(c - second.toList()[index]) + 1L }
@@ -15,16 +13,69 @@ fun surface(first: Pair<Long, Long>, second: Pair<Long, Long>): Long {
 
 fun isValid(square: Pair<Pos, Pos>, lines: List<Pair<Pos, Pos>>): Boolean {
     val squarePointsToCheck = listOf(Pos(square.first.x, square.second.y), Pos(square.second.x, square.first.y))
-    return squarePointsToCheck.all { isInside(it, lines) }
+    val verticalLines = listOf(
+        Pair(Pos(square.first.x, square.second.y), square.first),
+        Pair(Pos(square.second.x, square.first.y), square.second)
+    )
+    val horizontalLines = listOf(
+        Pair(Pos(square.first.x, square.second.y), square.second),
+        Pair(Pos(square.second.x, square.first.y), square.first)
+    )
+    val squareLines = verticalLines + horizontalLines
+    val allSquarePointsAreInsideArea = squarePointsToCheck.all { squarePoint -> isInside(squarePoint, lines) }
+    val noLinePointIsStrictlyInsideSquare = lines.map { it.first }.none { linePoint ->
+        isInsideStrict(linePoint, squareLines)
+    }
+    val otherLineCrossingSquareLine = lines.find { otherLine ->
+        val crossingSquareLine = squareLines.find { squareLine -> crosses(squareLine, otherLine) }
+        if (crossingSquareLine != null) {
+            return@find true
+        }
+        return@find false
+    }
+    return noLinePointIsStrictlyInsideSquare && otherLineCrossingSquareLine == null && allSquarePointsAreInsideArea
+
 }
 
+fun crosses(squareLine: Pair<Pos, Pos>, other: Pair<Pos, Pos>): Boolean {
+    if (isVertical(squareLine)) {
+        if (isVertical(other)) {
+            return false
+        }
+        return squareLine.first.xIsBetweenStrict(other) && other.first.yIsBetweenStrict(other)
+    } else {
+        if (!isVertical(other)) {
+            return false
+        }
+        return squareLine.first.yIsBetweenStrict(other) && other.first.xIsBetweenStrict(squareLine)
+    }
+}
+
+fun isVertical(squareLine: Pair<Pos, Pos>): Boolean {
+    return squareLine.first.x == squareLine.second.x
+}
+
+
+fun exactLineMatch(pointToCheck: Pos, lines: List<Pair<Pos, Pos>>): Boolean =
+    lines.any { pointToCheck.isBetween(it.first, it.second) }
+
+
 fun isInside(pointToCheck: Pos, lines: List<Pair<Pos, Pos>>): Boolean {
-    val exactLineMatch = lines.any { pointToCheck.isBetween(it.first, it.second) }
+    val exactLineMatch = exactLineMatch(pointToCheck, lines)
     if (exactLineMatch) {
         return true
     }
     val amountOfLinesCrossedRight = lines
         .count { crossesRight(pointToCheck, it) }
+    return amountOfLinesCrossedRight % 2 == 1
+}
+
+fun isInsideStrict(pointToCheck: Pos, lines: List<Pair<Pos, Pos>>): Boolean {
+    val exactLineMatch = exactLineMatch(pointToCheck, lines)
+    if (exactLineMatch) {
+        return false
+    }
+    val amountOfLinesCrossedRight = lines.count { crossesRight(pointToCheck, it) }
     return amountOfLinesCrossedRight % 2 == 1
 }
 
@@ -52,18 +103,6 @@ fun main() {
         val others: List<Pos> = pairs.map { Pos(it) }
         val lines: List<Pair<Pos, Pos>> =
             others.mapIndexed { index, pos -> Pair(pos, others[(index + 1) % others.size]) }
-        val badLine = lines.find {
-            lines.filter { l -> l != it }.any { other ->
-                val badOther = other.first.sameY(it.toList() + listOf(other.second)) && (other.first.xIsBetween(
-                    it.first,
-                    it.second
-                ) || other.second.xIsBetween(it.first, it.second))
-                badOther
-            }
-        }
-        if (badLine != null) {
-            throw Exception("There should not be any overlapping lines")
-        }
         val solution = sortedPairs.find {
             isValid(it.first, lines)
         }

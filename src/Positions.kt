@@ -101,6 +101,13 @@ data class Pos(val x: Long, val y: Long) {
     fun yIsBetweenExcl(other1: Pos, other2: Pos): Boolean {
         return numberIsBetweenExcl(other1.y, other2.y, y)
     }
+
+    fun yIsBetweenStrict(other: Pair<Pos, Pos>): Boolean {
+        return numberIsBetweenStrict(other.first.y, other.second.y, this.y)
+    }
+    fun xIsBetweenStrict(other: Pair<Pos, Pos>): Boolean {
+        return numberIsBetweenStrict(other.first.x, other.second.x, this.x)
+    }
 }
 
 private fun numberIsBetween(first: Long, second: Long, maybeBetween: Long): Boolean =
@@ -108,5 +115,9 @@ private fun numberIsBetween(first: Long, second: Long, maybeBetween: Long): Bool
 
 private fun numberIsBetweenExcl(first: Long, second: Long, maybeBetween: Long): Boolean =
     ((min(first, second) + 1)..max(first, second)).contains(maybeBetween)
+
+  
+private fun numberIsBetweenStrict(first: Long, second: Long, maybeBetween: Long): Boolean =
+    ((min(first, second) + 1)..<max(first, second)).contains(maybeBetween)
 
   
