@@ -1,4 +1,6 @@
 import kotlin.math.absoluteValue
+import kotlin.math.max
+import kotlin.math.min
 
 
 enum class Rotation(val xMult: Int, val yMult: Int, val zMult: Int = 1) {
@@ -66,3 +68,4 @@ class Pos3D(val x: Int, val y: Int, val z: Int) {
         return all.map { it.absoluteValue }.sum()
     }
 }
+
