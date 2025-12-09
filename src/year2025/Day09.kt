@@ -1,5 +1,6 @@
 package year2025
 
+import Pos
 import checkEquals
 import prcp
 import readInput
@@ -10,18 +11,49 @@ fun surface(first: Pair<Long, Long>, second: Pair<Long, Long>): Long {
         .reduce { acc, lng -> acc * lng }
 }
 
+fun isValid(square: Pair<Pos, Pos>, others: List<Pos>): Boolean {
+    val squarePointsToCheck = listOf(Pos(square.first.x, square.second.y), Pos(square.second.x, square.first.y))
+    return squarePointsToCheck.all { isInside(it, others) }
+}
+
+fun isInside(pointToCheck: Pos, others: List<Pos>): Boolean {
+    val amountOfLinesCrossedRight = others.mapIndexed { index, pos -> Pair(pos, others[(index + 1) % others.size]) }
+        .count { crossesRight(pointToCheck, it) }
+    return amountOfLinesCrossedRight % 2 == 1
+}
+
+fun crossesRight(pointToCheck: Pos, it: Pair<Pos, Pos>): Boolean {
+    val lineX = it.first.x
+    val isVertical = lineX == it.second.x
+    if(!isVertical) {
+        return false
+    }
+    return pointToCheck.yIsBetween(it.first, it.second) && pointToCheck.x <= lineX
+}
+
 fun main() {
     fun part1(input: List<String>): Long {
         val pairs = input.map { it.split(",").map { it.toLong() } }.map { Pair(it[0], it[1]) }
-        val surfaces = pairs.flatMap { first ->
-            pairs.filter { first !== it }.map { second -> surface(second, first) }
+        val posPairs = pairs.flatMap { first ->
+            pairs.filter { first !== it }.map { second -> Pair(Pair(Pos(first), Pos(second)), surface(second, first)) }
         }
-        return surfaces.max()
+        val sortedPairs = posPairs.sortedByDescending { it.second }
+        return sortedPairs.first().second
     }
 
     fun part2(input: List<String>): Long {
-        return 0
+        val pairs = input.map { it.split(",").map { it.toLong() } }.map { Pair(it[0], it[1]) }
+        val posPairs = pairs.flatMap { first ->
+            pairs.filter { first !== it }.map { second -> Pair(Pair(Pos(first), Pos(second)), surface(second, first)) }
+        }
+        val sortedPairs = posPairs.sortedByDescending { it.second }
+        val others: List<Pos> = pairs.map { Pos(it) }
+        val solution = sortedPairs.find {
+            isValid(it.first, others)
+        }
+        return solution!!.second
     }
+
 
     // test if implementation meets criteria from the description, like:
     val day = 9
@@ -30,6 +62,6 @@ fun main() {
     checkEquals(part1(testInput), 50)
     val input = readInput("Day$day")
     prcp(part1(input))
-    checkEquals(part2(testInput), 0)
+    checkEquals(part2(testInput), 24)
     prcp(part2(input))
 }
