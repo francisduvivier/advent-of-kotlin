@@ -33,8 +33,9 @@ fun isValid(square: Pair<Pos, Pos>, lines: List<Pair<Pos, Pos>>): Boolean {
         }
         return@find false
     }
-    return noLinePointIsStrictlyInsideSquare && otherLineCrossingSquareLine == null && allSquarePointsAreInsideArea
-
+    val midSquarePointIsInsideArea =
+        isInsideStrict(Pos((square.first.x + square.second.x) / 2, (square.first.y + square.second.y) / 2), lines)
+    return noLinePointIsStrictlyInsideSquare && otherLineCrossingSquareLine == null && allSquarePointsAreInsideArea && midSquarePointIsInsideArea
 }
 
 fun crosses(squareLine: Pair<Pos, Pos>, other: Pair<Pos, Pos>): Boolean {
