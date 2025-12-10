@@ -26,6 +26,9 @@ fun isValid(square: Pair<Pos, Pos>, lines: List<Pair<Pos, Pos>>): Boolean {
     val noLinePointIsStrictlyInsideSquare = lines.map { it.first }.none { linePoint ->
         isInsideStrict(linePoint, squareLines)
     }
+    val noLineMidIsStrictlyInsideSquare = lines.map { Pos((it.first.x + it.second.x) / 2, (it.first.y + it.second.y) / 2) }.none { linePoint ->
+        isInsideStrict(linePoint, squareLines)
+    }
     val otherLineCrossingSquareLine = lines.find { otherLine ->
         val crossingSquareLine = squareLines.find { squareLine -> crosses(squareLine, otherLine) }
         if (crossingSquareLine != null) {
@@ -35,7 +38,7 @@ fun isValid(square: Pair<Pos, Pos>, lines: List<Pair<Pos, Pos>>): Boolean {
     }
     val midSquarePointIsInsideArea =
         isInsideStrict(Pos((square.first.x + square.second.x) / 2, (square.first.y + square.second.y) / 2), lines)
-    return noLinePointIsStrictlyInsideSquare && otherLineCrossingSquareLine == null && allSquarePointsAreInsideArea && midSquarePointIsInsideArea
+    return noLineMidIsStrictlyInsideSquare && noLinePointIsStrictlyInsideSquare && otherLineCrossingSquareLine == null && allSquarePointsAreInsideArea && midSquarePointIsInsideArea
 }
 
 fun crosses(squareLine: Pair<Pos, Pos>, other: Pair<Pos, Pos>): Boolean {
