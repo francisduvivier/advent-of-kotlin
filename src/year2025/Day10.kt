@@ -36,60 +36,45 @@ fun solveLine(line: String): Long {
 
     val state: List<Int> = wantedChars.map { 0 }
     val nbCoeffs = components.size
+    
+    fun checkSolutionsRec(
+        components: List<List<Int>>,
+        state: List<Int>,
+        trySize: Int,
+    ): Boolean {
+        if (state == wantedChars) {
+            return true
+        }
+        if (trySize == 0) {
+            return false
+        }
+        for (comp in components) {
+            val newState = pushComp(comp, state)
+            val checkSolutionsRec = checkSolutionsRec(
+                components.slice(1 until components.size),
+                newState,
+                trySize - 1
+            )
+            if (checkSolutionsRec) {
+                return true
+            }
+        }
+        return false
+    }
+
     for (trySize in 1..nbCoeffs) {
-        if (checkSolutionsRec(components, state, wantedChars, trySize, 0)) {
+        if (checkSolutionsRec(components, state, trySize)) {
             return trySize.toLong()
         }
     }
     throw Exception("No solution found")
 }
 
-fun checkSolutionsRec(
-    components: List<List<Int>>,
-    state: List<Int>,
-    wantedChars: List<Int>,
-    trySize: Int,
-    stateOffset: Int
-): Boolean {
-    if (state == wantedChars) {
-        return true
-    }
-    if (trySize == 0) {
-        return false
-    }
-    if (state[0] == wantedChars[0]) {
-        return checkSolutionsRec(
-            components,
-            state.slice(1..state.lastIndex),
-            wantedChars.slice(1..wantedChars.lastIndex),
-            trySize,
-            stateOffset + 1
-        )
-    }
-    for (comp in components) {
-        val newState = pushComp(comp, state, stateOffset)
-        if (newState[0] != wantedChars[0]) {
-            return false
-        }
-        val checkSolutionsRec = checkSolutionsRec(
-            components,
-            newState.slice(1..wantedChars.lastIndex),
-            wantedChars.slice(1..wantedChars.lastIndex),
-            trySize - 1,
-            stateOffset + 1
-        )
-        if (checkSolutionsRec) {
-            return true
-        }
-    }
-    return false
-}
 
-fun pushComp(comp: List<Int>, state: List<Int>, stateOffset: Int): List<Int> {
+fun pushComp(comp: List<Int>, state: List<Int>): List<Int> {
     val newState = state.toMutableList()
-    for (i in comp.filter { it >= stateOffset }) {
-        val relativeIndex = i - stateOffset
-        newState[relativeIndex] = (newState[relativeIndex] + 1) % 2
+    for (i in comp) {
+        newState[i] = (newState[i] + 1) % 2
     }
     return newState
 }
