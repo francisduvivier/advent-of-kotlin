@@ -7,6 +7,9 @@ import readInput
 
 typealias State = List<Int>
 
+fun List<List<Int>>.ts(): String {
+    return this.joinToString("\n") { it.joinToString() }
+}
 
 fun main() {
     fun part1(input: List<String>): Long {
@@ -70,43 +73,11 @@ fun main() {
             val wantedNumbers: State =
                 matchGroups[3]!!.value.split(",").map { it.toInt() }
 
-            val state: State = wantedNumbers.map { 0 }
-            val maxPossibleCost = wantedNumbers.sum().toLong()
-            val minCostMap = mutableMapOf<State, Long>()
-
-            fun checkSolutionsRec(
-                components: List<List<Int>>,
-                state: State,
-                pushesDone: Long,
-            ): Long? {
-                var index = 0
-                val badState = state.find { it > wantedNumbers[index++] }
-                if (badState !== null) {
-                    return null
-                }
-                if (minCostMap[state] != null && minCostMap[state]!! < pushesDone) {
-                    return null
-                }
-                minCostMap[state] = pushesDone 
-                if (state == wantedNumbers) {
-                    return pushesDone
-                }
-                if (pushesDone > maxPossibleCost) {
-                    assert(false)
-                }
-                val results = components.mapNotNull {
-                    val newState = pushComp2(it, state)
-                    checkSolutionsRec(
-                        components,
-                        newState,
-                        pushesDone + 1
-                    )
-                }
-                return results.minOrNull()
-            }
-
-            println("---- Solve line $line")
-            return checkSolutionsRec(components.sortedBy { it.size }, state, 0)!!
+            val valueMap = mutableMapOf<Int, Int>()
+            val augmentedMatrix: List<List<Int>> =
+                wantedNumbers.mapIndexed { index, y -> components.map { if (it.contains(index)) 1 else 0 } + listOf(y) }
+            val sortedAM = augmentedMatrix.sortedBy { it.indexOf(1) }
+            return valueMap.values.sum().toLong()
         }
 
         return input.map { solveLine(it) }.sum()
