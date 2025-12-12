@@ -107,7 +107,31 @@ fun List<Int>.decreaseIndex(indexToDecrease: Int): List<Int> {
     return this.mapIndexed { index, amount -> if (indexToDecrease == index) amount - 1 else amount }
 }
 
+fun List<List<Boolean>>.myToString(): String {
+    return this.map { it.map { if (it) "#" else "." }.joinToString("") }.joinToString("\n")
+}
+
 fun main() {
+    fun findOptionRec(amounts: List<Int>, accumulatedMask: BoolMatrix, shapeMaskOptions: List<Set<Mask>>): Boolean {
+        if (amounts.all { it == 0 }) return true
+        for (todoIndex in amounts.indices) {
+            if (amounts[todoIndex] == 0) continue
+            val allMasksForIndex = shapeMaskOptions[todoIndex]
+            val possiblePairs = allMasksForIndex.mapNotNull {
+                val result = accumulatedMask.addMask(it)
+                if (result != null) Pair(it, result) else null
+            }.toSet()
+            val possibleMasks = possiblePairs.map { it.first }.toSet()
+            return possiblePairs.any {
+                findOptionRec(
+                    amounts.decreaseIndex(todoIndex),
+                    it.second,
+                    shapeMaskOptions.mapIndexed { index, lists -> if (index == todoIndex) possibleMasks else lists }
+                )
+            }
+        }
+        assertNever()
+    }
 
     fun part1(input: List<String>): Long {
         val shapes: List<BoolMatrix> = parseShapes(input)
@@ -117,22 +141,8 @@ fun main() {
             val startMask = regionConfig.first.toMask()
             val shapeMaskOptions: List<Set<Mask>> = shapes.map { generateAllMasks(it, startMask) }
             println("---Masks for ALL shapes generated!")
-            fun findOptionRec(amounts: List<Int>, accumulatedMask: BoolMatrix): Boolean {
-                if (amounts.all { it == 0 }) return true
-                for (todoIndex in amounts.indices) {
-                    if (amounts[todoIndex] == 0) continue
-                    return shapeMaskOptions[todoIndex].any {
-                        val newMask = accumulatedMask.addMask(it) ?: return@any false
-                        return@any findOptionRec(
-                            amounts.decreaseIndex(todoIndex),
-                            newMask
-                        )
-                    }
-                }
-                assertNever()
-            }
 
-            return findOptionRec(regionConfig.second, startMask)
+            return findOptionRec(regionConfig.second, startMask, shapeMaskOptions)
         }
 
         return regions.count {
