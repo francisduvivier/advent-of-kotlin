@@ -1,8 +1,12 @@
 package year2025
 
 import checkEquals
+import min
 import prcp
 import readInput
+
+typealias State = List<Int>
+
 
 fun main() {
     fun part1(input: List<String>): Long {
@@ -63,48 +67,45 @@ fun main() {
             val components: List<List<Int>> =
                 matchGroups[2]!!.value.split(" ")
                     .map { comp -> comp.slice(1..<comp.lastIndex).split(",").map { it.toInt() } }
-            val wantedNumbers: List<Int> =
+            val wantedNumbers: State =
                 matchGroups[3]!!.value.split(",").map { it.toInt() }
 
-            val state: List<Int> = wantedNumbers.map { 0 }
-            val nbCoeffs = 100000000000L
+            val state: State = wantedNumbers.map { 0 }
+            val maxPossibleCost = wantedNumbers.sum().toLong()
+            val minCostMap = mutableMapOf<State, Long>()
 
             fun checkSolutionsRec(
                 components: List<List<Int>>,
-                state: List<Int>,
-                trySize: Long,
-            ): Boolean {
+                state: State,
+                pushesDone: Long,
+            ): Long? {
                 var index = 0
                 val badState = state.find { it > wantedNumbers[index++] }
                 if (badState !== null) {
-                    return false
+                    return null
                 }
+                if (minCostMap[state] != null && minCostMap[state]!! < pushesDone) {
+                    return null
+                }
+                minCostMap[state] = pushesDone 
                 if (state == wantedNumbers) {
-                    return true
+                    return pushesDone
                 }
-                if (trySize == 0L) {
-                    return false
+                if (pushesDone > maxPossibleCost) {
+                    assert(false)
                 }
-                for (comp in components) {
-                    val newState = pushComp2(comp, state)
-                    val checkSolutionsRec = checkSolutionsRec(
+                val results = components.mapNotNull {
+                    val newState = pushComp2(it, state)
+                    checkSolutionsRec(
                         components,
                         newState,
-                        trySize - 1
+                        pushesDone + 1
                     )
-                    if (checkSolutionsRec) {
-                        return true
-                    }
                 }
-                return false
+                return results.minOrNull()
             }
-
-            for (trySize in 1..nbCoeffs) {
-                if (checkSolutionsRec(components, state, trySize)) {
-                    return trySize
-                }
-            }
-            throw Exception("No solution found")
+            println("---- Solve line $line")
+            return checkSolutionsRec(components, state, 0)!!
         }
 
         return input.map { solveLine(it) }.sum()
