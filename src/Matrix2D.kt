@@ -15,7 +15,10 @@ fun <T> get8NeighborLocations(matrix: List<List<T>>, row: Int, col: Int): List<P
     return nLocs
 }
 
-fun toMatrix(matrix: List<String>): List<MutableList<Char>> = matrix.map { it.toCharArray().toMutableList() }
+typealias CharMatrix = List<MutableList<Char>>
+typealias BoolMatrix = List<List<Boolean>>
+
+fun toMatrix(matrix: List<String>): CharMatrix = matrix.map { it.toCharArray().toMutableList() }
 fun toMatrix(matrix: Array<IntArray>): List<MutableList<Int>> = matrix.map { it.toMutableList() }
 fun <T> toMatrix(matrix: Array<Array<T>>): List<MutableList<T>> = matrix.map { it.toMutableList() }
 
