@@ -104,8 +104,9 @@ fun main() {
                 }
                 return results.minOrNull()
             }
+
             println("---- Solve line $line")
-            return checkSolutionsRec(components, state, 0)!!
+            return checkSolutionsRec(components.sortedBy { it.size }, state, 0)!!
         }
 
         return input.map { solveLine(it) }.sum()
