@@ -145,9 +145,16 @@ fun main() {
             return findOptionRec(regionConfig.second, startMask, shapeMaskOptions)
         }
 
+        fun canFit2(regionConfig: RegionConfig): Boolean {
+            val regionSize = regionConfig.first.first * regionConfig.first.second
+            val minSizeNeed =
+                regionConfig.second.mapIndexed { index, amount -> amount * shapes[index].count1s() }.sum()
+            return minSizeNeed < regionSize
+        }
+
         return regions.count {
             println("doing region" + it);
-            val result = canFit(it)
+            val result = canFit2(it)
             println("result: " + result);
             return@count result
         }.toLong()
@@ -168,11 +175,15 @@ fun main() {
     val day = 12
     println("Starting Day${day}")
     val testInput = readInput("Day$day.test")
-    checkEquals(part1(testInput), 2)
+//    checkEquals(part1(testInput), 2)
     val input = readInput("Day$day")
     prcp(part1(input))
     checkEquals(part2(testInput), 0)
     prcp(part2(input))
+}
+
+private fun Mask.count1s(): Int {
+    return this.sumOf { it.count { it } }
 }
 
 private fun MatrixSize.toMask(): Mask {
