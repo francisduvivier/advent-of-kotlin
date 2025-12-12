@@ -62,29 +62,33 @@ fun main() {
             val matchGroups = Regex("""\[([.#]+)] (.*) \{(.*)}""").matchEntire(line)?.groups!!
             val components: List<List<Int>> =
                 matchGroups[2]!!.value.split(" ")
-                    .map { comp -> comp.slice(1..<comp.lastIndex).split(',').map { it.toInt() } }
-            val wantedNumbers: List<List<Int>> =
-                matchGroups[3]!!.value.split(" ")
-                    .map { comp -> comp.slice(1..<comp.lastIndex).split(',').map { it.toInt() } }
+                    .map { comp -> comp.slice(1..<comp.lastIndex).split(",").map { it.toInt() } }
+            val wantedNumbers: List<Int> =
+                matchGroups[3]!!.value.split(",").map { it.toInt() }
 
             val state: List<Int> = wantedNumbers.map { 0 }
-            val nbCoeffs = components.size
+            val nbCoeffs = 100000000000L
 
             fun checkSolutionsRec(
                 components: List<List<Int>>,
                 state: List<Int>,
-                trySize: Int,
+                trySize: Long,
             ): Boolean {
+                var index = 0
+                val badState = state.find { it > wantedNumbers[index++] }
+                if (badState !== null) {
+                    return false
+                }
                 if (state == wantedNumbers) {
                     return true
                 }
-                if (trySize == 0) {
+                if (trySize == 0L) {
                     return false
                 }
                 for (comp in components) {
-                    val newState = pushComp(comp, state)
+                    val newState = pushComp2(comp, state)
                     val checkSolutionsRec = checkSolutionsRec(
-                        components.slice(1 until components.size),
+                        components,
                         newState,
                         trySize - 1
                     )
@@ -97,13 +101,13 @@ fun main() {
 
             for (trySize in 1..nbCoeffs) {
                 if (checkSolutionsRec(components, state, trySize)) {
-                    return trySize.toLong()
+                    return trySize
                 }
             }
             throw Exception("No solution found")
         }
 
-        return 0
+        return input.map { solveLine(it) }.sum()
     }
 
     // test if implementation meets criteria from the description, like:
@@ -113,7 +117,7 @@ fun main() {
     checkEquals(part1(testInput), 7)
     val input = readInput("Day$day")
     prcp(part1(input))
-    checkEquals(part2(testInput), 0)
+    checkEquals(part2(testInput), 33)
     prcp(part2(input))
 }
 
@@ -122,6 +126,14 @@ fun pushComp(comp: List<Int>, state: List<Int>): List<Int> {
     val newState = state.toMutableList()
     for (i in comp) {
         newState[i] = (newState[i] + 1) % 2
+    }
+    return newState
+}
+
+fun pushComp2(comp: List<Int>, state: List<Int>): List<Int> {
+    val newState = state.toMutableList()
+    for (i in comp) {
+        newState[i] = newState[i] + 1
     }
     return newState
 }
