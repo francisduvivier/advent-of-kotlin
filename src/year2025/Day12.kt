@@ -32,16 +32,20 @@ fun parseRegionLine(it: String): RegionConfig {
 }
 
 fun generateAllMasks(it: BoolMatrix, region: Mask): Set<Mask> {
-    return it.generateRotations().flatMap { it.generateFlips() }.flatMap { it.generateTranslations(region) }.toSet()
+    println("Generating all masks!")
+    val masks =
+        it.generateRotations().flatMap { it.generateFlips() }.flatMap { it.generateTranslations(region) }.toSet()
+    println("Done Generating all (${masks.size}) masks!")
+    return masks
 }
 typealias Mask = BoolMatrix
 
 private fun BoolMatrix.generateTranslations(region: Mask): Set<Mask> {
     val rowOptions = region.rows() - this.rows()
     val colOptions = region.cols() - this.cols()
-    val noChange: MatrixSize = Pair(region.rows(), region.cols()) // TODO TODO TODO
+    val noChange: MatrixSize = Pair(region.rows(), region.cols())
 
-    return (0..rowOptions).flatMap { rowOffset ->
+    val allOption = (0..rowOptions).flatMap { rowOffset ->
         (0..colOptions).map { colOffset ->
             val translatedMask = noChange.toMask().mapIndexed { rowIndex, row ->
                 val translatedRow = rowIndex - rowOffset
@@ -54,11 +58,12 @@ private fun BoolMatrix.generateTranslations(region: Mask): Set<Mask> {
             }
             region.addMask(translatedMask)!!
         }
-    }.toSet()
+    }
+    return allOption.toSet()
 }
 
 private fun BoolMatrix.generateFlips(): List<BoolMatrix> {
-    return listOf(this, this.flippedHorizontal())
+    return listOf(this, this.flippedHorizontal(), this.flippedVertical())
 }
 
 private fun BoolMatrix.flippedHorizontal(): BoolMatrix {
@@ -71,11 +76,19 @@ private fun BoolMatrix.flippedVertical(): BoolMatrix {
 
 private fun BoolMatrix.generateRotations(): List<BoolMatrix> {
     val rotated180 = this.flippedHorizontal().flippedVertical()
-    return listOf(this, this.rotate90(), rotated180, rotated180.rotate90())
+    return listOf(this, this.rotated90(), rotated180, rotated180.rotated90())
 }
 
-private fun BoolMatrix.rotate90(): BoolMatrix {
-    return this.reversed() // TODO TODO TODO
+private fun BoolMatrix.rotated90(): BoolMatrix {
+    return this.transposed()
+}
+
+private fun BoolMatrix.transposed(): BoolMatrix {
+    return List(this.cols(), { this.getColumn(it) })
+}
+
+private fun BoolMatrix.getColumn(i: Int): List<Boolean> {
+    return this.map { it[i] }
 }
 
 fun BoolMatrix.rows(): Int {
@@ -103,7 +116,7 @@ fun main() {
         fun canFit(regionConfig: RegionConfig): Boolean {
             val startMask = regionConfig.first.toMask()
             val shapeMaskOptions: List<Set<Mask>> = shapes.map { generateAllMasks(it, startMask) }
-
+            println("---Masks for ALL shapes generated!")
             fun findOptionRec(amounts: List<Int>, accumulatedMask: BoolMatrix): Boolean {
                 if (amounts.all { it == 0 }) return true
                 for (todoIndex in amounts.indices) {
