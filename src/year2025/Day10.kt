@@ -9,10 +9,20 @@ typealias ButtonContributionVector = List<Int>
 
 data class Flags(val DISABLE_EXTRA_CONSTRAINTS: Boolean = false) {
 }
+
 val flags = Flags()
 
 fun main() {
     fun part1(input: List<String>): Int {
+
+        fun pushComp(comp: List<Int>, state: List<Int>): List<Int> {
+            val newState = state.toMutableList()
+            for (i in comp) {
+                newState[i] = (newState[i] + 1) % 2
+            }
+            return newState
+        }
+
         fun solveLine(line: String): Int {
             // line example: [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
             val matchGroups = Regex("""\[([.#]+)] (.*) \{.*""").matchEntire(line)?.groups!!
@@ -58,8 +68,6 @@ fun main() {
             throw Exception("No solution found")
         }
 
-        // min sum(X) where X *(dot product) S = WANTED
-        // [1,0,1] = x1 * (0,1,1)  + x2 * (1,1,0) * x3 * (0,1,0) + x4 (1,0,0) => x1=1, x2=1 =>X = (1,1,0,0)
         return input.map { solveLine(it) }.sum()
     }
 
@@ -195,14 +203,6 @@ private fun List<ButtonContributionVector>.getCol(index: Int): List<Int> {
     return this.map { row -> row[index] }
 }
 
-
-fun pushComp(comp: List<Int>, state: List<Int>): List<Int> {
-    val newState = state.toMutableList()
-    for (i in comp) {
-        newState[i] = (newState[i] + 1) % 2
-    }
-    return newState
-}
 
 fun pushButton(vector: ButtonContributionVector, state: List<Int>): List<Int> {
     val newState = state.toMutableList()
