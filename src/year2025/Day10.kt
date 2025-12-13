@@ -1,6 +1,7 @@
 package year2025
 
 import checkEquals
+import min
 import prcp
 import readInput
 
@@ -8,8 +9,8 @@ typealias State = List<Int>
 
 
 fun main() {
-    fun part1(input: List<String>): Int {
-        fun solveLine(line: String): Int {
+    fun part1(input: List<String>): Long {
+        fun solveLine(line: String): Long {
             // line example: [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
             val matchGroups = Regex("""\[([.#]+)] (.*) \{.*""").matchEntire(line)?.groups!!
             val wantedChars = matchGroups[1]!!.value.toCharArray().map { if (it == '#') 1 else 0 }
@@ -48,7 +49,7 @@ fun main() {
 
             for (trySize in 1..nbCoeffs) {
                 if (checkSolutionsRec(components, state, trySize)) {
-                    return trySize
+                    return trySize.toLong()
                 }
             }
             throw Exception("No solution found")
@@ -59,8 +60,8 @@ fun main() {
         return input.map { solveLine(it) }.sum()
     }
 
-    fun part2(input: List<String>): Int {
-        fun solveLine(line: String): Int {
+    fun part2(input: List<String>): Long {
+        fun solveLine(line: String): Long {
             // line example: [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
             val matchGroups = Regex("""\[([.#]+)] (.*) \{(.*)}""").matchEntire(line)?.groups!!
             val components: List<List<Int>> =
@@ -71,49 +72,35 @@ fun main() {
 
             val state: State = wantedNumbers.map { 0 }
             val maxPossibleCost = wantedNumbers.sum().toLong()
-            val minCostMap = mutableMapOf<State, Int>()
-
-            fun isOkState(tryState: State, pushCount: Int): Boolean {
-                if (minCostMap[tryState] != null && minCostMap[tryState]!! < pushCount) return false
-                var index1 = 0
-                return !tryState.any { it > wantedNumbers[index1++] }
-            }
+            val minCostMap = mutableMapOf<State, Long>()
 
             fun checkSolutionsRec(
                 components: List<List<Int>>,
                 state: State,
-                pushCount: Int,
-            ): Int? {
-
-                if (state == wantedNumbers) {
-                    return pushCount
+                pushesDone: Long,
+            ): Long? {
+                var index = 0
+                val badState = state.find { it > wantedNumbers[index++] }
+                if (badState !== null) {
+                    return null
                 }
-                if (pushCount > maxPossibleCost) {
+                if (minCostMap[state] != null && minCostMap[state]!! < pushesDone) {
+                    return null
+                }
+                minCostMap[state] = pushesDone 
+                if (state == wantedNumbers) {
+                    return pushesDone
+                }
+                if (pushesDone > maxPossibleCost) {
                     assert(false)
                 }
                 val results = components.mapNotNull {
-                    var totalPushCount = pushCount
-                    var newState: State = state
-                    do {
-                        val tryState = pushComp2(it, newState)
-                        val newPushCount = totalPushCount + 1
-                        if (isOkState(tryState, newPushCount)) {
-                            minCostMap[tryState] = newPushCount
-                            totalPushCount = newPushCount
-                            newState = tryState
-                        } else {
-                            break
-                        }
-                    } while (true)
-                    if (totalPushCount == pushCount) {
-                        null
-                    } else {
-                        checkSolutionsRec(
-                            components,
-                            newState,
-                            totalPushCount
-                        )
-                    }
+                    val newState = pushComp2(it, state)
+                    checkSolutionsRec(
+                        components,
+                        newState,
+                        pushesDone + 1
+                    )
                 }
                 return results.minOrNull()
             }
@@ -122,14 +109,7 @@ fun main() {
             return checkSolutionsRec(components.sortedBy { it.size }, state, 0)!!
         }
 
-        return input.map {
-            try {
-                solveLine(it)
-            } catch (e: Throwable) {
-                println("Error: ${e.message}")
-                0
-            }
-        }.sum()
+        return input.map { solveLine(it) }.sum()
     }
 
     // test if implementation meets criteria from the description, like:
@@ -152,7 +132,7 @@ fun pushComp(comp: List<Int>, state: List<Int>): List<Int> {
     return newState
 }
 
-fun pushComp2(comp: List<Int>, state: State): List<Int> {
+fun pushComp2(comp: List<Int>, state: List<Int>): List<Int> {
     val newState = state.toMutableList()
     for (i in comp) {
         newState[i] = newState[i] + 1
