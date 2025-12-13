@@ -94,7 +94,6 @@ fun main() {
                 if (pushCount > maxPossibleCost) {
                     assert(false)
                 }
-                minCostMap[state] = pushCount
                 val results = components.mapNotNull {
                     var totalPushCount = pushCount
                     var newState: State = state
@@ -105,6 +104,7 @@ fun main() {
                             if (newState !== state) {
                                 skippedOptions.add(Pair(newState, totalPushCount))
                             }
+                            minCostMap[tryState] = newPushCount
                             totalPushCount = newPushCount
                             newState = tryState
                         } else {
