@@ -139,7 +139,31 @@ fun addConstraints(
     originalState: State,
     originalButtonContributionVectors: List<ButtonContributionVector>
 ): Pair<State, List<ButtonContributionVector>> {
-    return Pair(originalState, originalButtonContributionVectors)
+    val augmented = toAugmentedMatrix(originalState, originalButtonContributionVectors)
+    return fromAugmented(augmented)
+}
+
+private fun fromAugmented(
+    augmented: List<List<Int>>
+): Pair<State, List<ButtonContributionVector>> {
+    val components = (0..<augmented.nbCols()).map { augmented.getCol(it) }
+    val pair = Pair(augmented.map { it.last() }, components)
+    return pair
+}
+
+private fun List<List<Int>>.nbCols(): Int {
+    return this[0].size
+}
+
+private fun toAugmentedMatrix(
+    originalState: State,
+    originalButtonContributionVectors: List<ButtonContributionVector>
+): List<List<Int>> = originalState.mapIndexed { index, s ->
+    originalButtonContributionVectors.getCol(index) + listOf(s)
+}
+
+private fun List<ButtonContributionVector>.getCol(index: Int): List<Int> {
+    return this.map { row -> row[index] }
 }
 
 
