@@ -7,7 +7,7 @@ import readInput
 typealias State = List<Int>
 typealias ButtonContributionVector = List<Int>
 
-data class Flags(val DISABLE_EXTRA_CONSTRAINTS: Boolean = false) {
+data class Flags(val DISABLE_EXTRA_CONSTRAINTS: Boolean = true) {
 }
 val flags = Flags()
 
