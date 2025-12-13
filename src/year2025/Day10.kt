@@ -85,13 +85,7 @@ fun main() {
             val state: State = wantedNumbers.map { 0 }
 
             fun strictlyBetterCostFound(state: State, cost: Int): Boolean =
-                minCostMap.getOrDefault(state, Int.MAX_VALUE) <= cost ||
-                        minCostMap.any {
-                            val minCostState = it.key
-                            val betterFound = cost >= it.value &&
-                                    (0..minCostState.lastIndex).all { state[it] <= minCostState[it] }
-                            betterFound
-                        }
+                minCostMap.getOrDefault(state, Int.MAX_VALUE) <= cost
 
             // Plan: we want to add equations, so that we can prune much faster, for this, we need to change from boolean to numbers and we should allow smaller than 0
             // For this, we need to convert our components to vectors and we need to then add extra constraints.
