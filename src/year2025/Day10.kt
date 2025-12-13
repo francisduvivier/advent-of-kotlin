@@ -75,8 +75,20 @@ fun main() {
             val minCostMap = mutableMapOf<State, Long>()
             val originalButtonContributionVectors: List<ButtonContributionVector> =
                 buttonSettings.map { bs -> originalWantedNumbers.mapIndexed { index, curr -> if (bs.contains(index)) 1 else 0 } }
-            val (wantedNumbers, buttonContributionVectors) = addConstraints(originalWantedNumbers, originalButtonContributionVectors)
+            val (wantedNumbers, buttonContributionVectors) = addConstraints(
+                originalWantedNumbers,
+                originalButtonContributionVectors
+            )
             val state: State = wantedNumbers.map { 0 }
+
+            fun strictlyBetterCostFound(state: State, cost: Long): Boolean =
+                minCostMap.any {
+                    val minCostState = it.key
+                    val betterFound = cost >= it.value &&
+                            (0..minCostState.lastIndex).all { state[it] <= minCostState[it] }
+                    betterFound
+                }
+
             // Plan: we want to add equations, so that we can prune much faster, for this, we need to change from boolean to numbers and we should allow smaller than 0
             // For this, we need to convert our components to vectors and we need to then add extra constraints.
             // Extra constraints means that 
@@ -93,11 +105,10 @@ fun main() {
                 pushesDone: Long,
             ): Long? {
                 var index = 0
-                val badState = state.find { it > wantedNumbers[index++] }
-                if (badState !== null) {
+                if (state.any { it > wantedNumbers[index++] }) {
                     return null
                 }
-                if (minCostMap[state] != null && minCostMap[state]!! < pushesDone) {
+                if (strictlyBetterCostFound(state, pushesDone)) {
                     return null
                 }
                 minCostMap[state] = pushesDone
@@ -117,8 +128,10 @@ fun main() {
                 return results.minOrNull()
             }
 
-            println("---- Solve line $line")
-            return checkSolutionsRec(state, 0)!!
+            print("---- Solve line $line")
+            val checkSolutionsRec = checkSolutionsRec(state, 0)
+            println(", SOL: $checkSolutionsRec")
+            return checkSolutionsRec!!
         }
 
         return input.map { solveLine(it) }.sum()
@@ -141,7 +154,12 @@ fun addConstraints(
 ): Pair<State, List<ButtonContributionVector>> {
     val augmented = toAugmentedMatrix(wantedState, originalButtonContributionVectors)
     val augmentedWithExtraConstraints = augmented.toMutableList()
-    augmentedWithExtraConstraints.addLast(augmented.last())
+
+    val extraRows = augmented.mapIndexed { index, ints ->
+        augmented.slice((index + 1)..augmented.lastIndex)
+            .map { other -> if (other.last() < ints.last()) ints.doMin(other) else other.doMin(ints) }
+    }.flatten()
+    augmentedWithExtraConstraints.addAll(extraRows)
     val newPair = fromAugmented(augmentedWithExtraConstraints)
     return newPair
 }
@@ -156,6 +174,10 @@ private fun fromAugmented(
 
 private fun List<List<Int>>.nbCols(): Int {
     return this[0].size
+}
+
+private fun List<Int>.doMin(other: List<Int>): List<Int> {
+    return this.mapIndexed { index, it -> it - other[index] }
 }
 
 private fun toAugmentedMatrix(
