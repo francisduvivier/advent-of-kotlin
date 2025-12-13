@@ -72,8 +72,8 @@ fun main() {
             val state: State = wantedNumbers.map { 0 }
             val maxPossibleCost = wantedNumbers.sum().toLong()
             val minCostMap = mutableMapOf<State, Int>()
-            val skippedOptions = sortedSetOf<Pair<State, Int>>(
-                Comparator { p1, p2 -> p1.second - p2.second }
+            val skippedOptions = mutableSetOf<Pair<State, Int>>(
+//                Comparator { p1, p2 -> p1.second - p2.second }
             )
 
             fun isOkState(tryState: State, pushCount: Int): Boolean {
