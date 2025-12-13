@@ -7,6 +7,9 @@ import readInput
 typealias State = List<Int>
 typealias ButtonContributionVector = List<Int>
 
+data class Flags(val DISABLE_EXTRA_CONSTRAINTS: Boolean = false) {
+}
+val flags = Flags()
 
 fun main() {
     fun part1(input: List<String>): Int {
@@ -83,12 +86,12 @@ fun main() {
 
             fun strictlyBetterCostFound(state: State, cost: Int): Boolean =
                 minCostMap.getOrDefault(state, Int.MAX_VALUE) <= cost ||
-                minCostMap.any {
-                    val minCostState = it.key
-                    val betterFound = cost >= it.value &&
-                            (0..minCostState.lastIndex).all { state[it] <= minCostState[it] }
-                    betterFound
-                }
+                        minCostMap.any {
+                            val minCostState = it.key
+                            val betterFound = cost >= it.value &&
+                                    (0..minCostState.lastIndex).all { state[it] <= minCostState[it] }
+                            betterFound
+                        }
 
             // Plan: we want to add equations, so that we can prune much faster, for this, we need to change from boolean to numbers and we should allow smaller than 0
             // For this, we need to convert our components to vectors and we need to then add extra constraints.
@@ -130,8 +133,10 @@ fun main() {
             }
 
             print("---- Solve line $line")
+            val startTime = System.nanoTime()
             val checkSolutionsRec = checkSolutionsRec(state, 0)
-            println(", SOL: $checkSolutionsRec")
+            val timeDiffMs = (System.nanoTime() - startTime).toDouble() / 1_000_000
+            println(", SOL: $checkSolutionsRec in $timeDiffMs ms")
             return checkSolutionsRec!!
         }
 
@@ -141,18 +146,22 @@ fun main() {
     // test if implementation meets criteria from the description, like:
     val day = 10
     println("Starting Day${day}")
+    println("Flags: $flags")
     val testInput = readInput("Day$day.test")
     checkEquals(part1(testInput), 7)
     val input = readInput("Day$day")
     prcp(part1(input))
     checkEquals(part2(testInput), 33)
+    println("Flags: $flags")
     prcp(part2(input))
 }
+
 
 fun addConstraints(
     wantedState: State,
     originalButtonContributionVectors: List<ButtonContributionVector>
 ): Pair<State, List<ButtonContributionVector>> {
+    if (flags.DISABLE_EXTRA_CONSTRAINTS) return Pair(wantedState, originalButtonContributionVectors)
     val augmented = toAugmentedMatrix(wantedState, originalButtonContributionVectors)
     val augmentedWithExtraConstraints = augmented.toMutableList()
 
