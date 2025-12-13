@@ -1,11 +1,11 @@
 package year2025
 
 import checkEquals
-import min
 import prcp
 import readInput
 
 typealias State = List<Int>
+typealias ButtonContributionVector = List<Int>
 
 
 fun main() {
@@ -60,11 +60,12 @@ fun main() {
         return input.map { solveLine(it) }.sum()
     }
 
+
     fun part2(input: List<String>): Long {
         fun solveLine(line: String): Long {
             // line example: [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
             val matchGroups = Regex("""\[([.#]+)] (.*) \{(.*)}""").matchEntire(line)?.groups!!
-            val components: List<List<Int>> =
+            val buttonSettings: List<List<Int>> =
                 matchGroups[2]!!.value.split(" ")
                     .map { comp -> comp.slice(1..<comp.lastIndex).split(",").map { it.toInt() } }
             val wantedNumbers: State =
@@ -73,9 +74,21 @@ fun main() {
             val state: State = wantedNumbers.map { 0 }
             val maxPossibleCost = wantedNumbers.sum().toLong()
             val minCostMap = mutableMapOf<State, Long>()
+            val buttonContributionVectors: List<ButtonContributionVector> =
+                buttonSettings.map { bs -> wantedNumbers.mapIndexed { index, curr -> if (bs.contains(index)) 1 else 0 } }
 
+            // Plan: we want to add equations, so that we can prune much faster, for this, we need to change from boolean to numbers and we should allow smaller than 0
+            // For this, we need to convert our components to vectors and we need to then add extra constraints.
+            // Extra constraints means that 
+            //  - our wanted state will possibly have negative values
+            //  - when we apply a component, we need to apply it also to the other rows.
+            // Then how can we think about these other rows? these other rows are extra counters which have a different button wiring
+            // So if we already rewrite our code to work with vectors and possibly negative counters, then, we could already try it out without needing to already do the row reduction.
+            // So currently, our components are indexes of counters.
+            // Instead, our components need to become multipliers for counters, so it's still a list of ints, but they need to be interpreted differently, so lets give it a different name
+            // But so not to forget is that the columns are for the buttons, and the rows are for the counters
+            // so extra counter means an extra setting for every button
             fun checkSolutionsRec(
-                components: List<List<Int>>,
                 state: State,
                 pushesDone: Long,
             ): Long? {
@@ -87,17 +100,16 @@ fun main() {
                 if (minCostMap[state] != null && minCostMap[state]!! < pushesDone) {
                     return null
                 }
-                minCostMap[state] = pushesDone 
+                minCostMap[state] = pushesDone
                 if (state == wantedNumbers) {
                     return pushesDone
                 }
                 if (pushesDone > maxPossibleCost) {
                     assert(false)
                 }
-                val results = components.mapNotNull {
+                val results = buttonContributionVectors.mapNotNull {
                     val newState = pushComp2(it, state)
                     checkSolutionsRec(
-                        components,
                         newState,
                         pushesDone + 1
                     )
@@ -106,7 +118,7 @@ fun main() {
             }
 
             println("---- Solve line $line")
-            return checkSolutionsRec(components.sortedBy { it.size }, state, 0)!!
+            return checkSolutionsRec(state, 0)!!
         }
 
         return input.map { solveLine(it) }.sum()
@@ -132,10 +144,10 @@ fun pushComp(comp: List<Int>, state: List<Int>): List<Int> {
     return newState
 }
 
-fun pushComp2(comp: List<Int>, state: List<Int>): List<Int> {
+fun pushComp2(vector: ButtonContributionVector, state: List<Int>): List<Int> {
     val newState = state.toMutableList()
-    for (i in comp) {
-        newState[i] = newState[i] + 1
+    for (i in 0 until vector.size) {
+        newState[i] = newState[i] + vector[i]
     }
     return newState
 }
