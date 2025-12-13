@@ -68,15 +68,15 @@ fun main() {
             val buttonSettings: List<List<Int>> =
                 matchGroups[2]!!.value.split(" ")
                     .map { comp -> comp.slice(1..<comp.lastIndex).split(",").map { it.toInt() } }
-            val wantedNumbers: State =
+            val originalWantedNumbers: State =
                 matchGroups[3]!!.value.split(",").map { it.toInt() }
 
-            val originalState: State = wantedNumbers.map { 0 }
-            val maxPossibleCost = wantedNumbers.sum().toLong()
+            val maxPossibleCost = originalWantedNumbers.sum().toLong()
             val minCostMap = mutableMapOf<State, Long>()
             val originalButtonContributionVectors: List<ButtonContributionVector> =
-                buttonSettings.map { bs -> wantedNumbers.mapIndexed { index, curr -> if (bs.contains(index)) 1 else 0 } }
-            val (state, buttonContributionVectors) = addConstraints(originalState, originalButtonContributionVectors)
+                buttonSettings.map { bs -> originalWantedNumbers.mapIndexed { index, curr -> if (bs.contains(index)) 1 else 0 } }
+            val (wantedNumbers, buttonContributionVectors) = addConstraints(originalWantedNumbers, originalButtonContributionVectors)
+            val state: State = wantedNumbers.map { 0 }
             // Plan: we want to add equations, so that we can prune much faster, for this, we need to change from boolean to numbers and we should allow smaller than 0
             // For this, we need to convert our components to vectors and we need to then add extra constraints.
             // Extra constraints means that 
@@ -136,18 +136,21 @@ fun main() {
 }
 
 fun addConstraints(
-    originalState: State,
+    wantedState: State,
     originalButtonContributionVectors: List<ButtonContributionVector>
 ): Pair<State, List<ButtonContributionVector>> {
-    val augmented = toAugmentedMatrix(originalState, originalButtonContributionVectors)
-    return fromAugmented(augmented)
+    val augmented = toAugmentedMatrix(wantedState, originalButtonContributionVectors)
+    val augmentedWithExtraConstraints = augmented.toMutableList()
+    augmentedWithExtraConstraints.addLast(augmented.last())
+    val newPair = fromAugmented(augmentedWithExtraConstraints)
+    return newPair
 }
 
 private fun fromAugmented(
     augmented: List<List<Int>>
 ): Pair<State, List<ButtonContributionVector>> {
-    val components = (0..<augmented.nbCols()).map { augmented.getCol(it) }
-    val pair = Pair(augmented.map { it.last() }, components)
+    val contributionVector = (0..<augmented.nbCols() - 1).map { augmented.getCol(it) }
+    val pair = Pair(augmented.getCol(augmented[0].lastIndex), contributionVector)
     return pair
 }
 
