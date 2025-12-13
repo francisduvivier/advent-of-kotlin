@@ -71,12 +71,12 @@ fun main() {
             val wantedNumbers: State =
                 matchGroups[3]!!.value.split(",").map { it.toInt() }
 
-            val state: State = wantedNumbers.map { 0 }
+            val originalState: State = wantedNumbers.map { 0 }
             val maxPossibleCost = wantedNumbers.sum().toLong()
             val minCostMap = mutableMapOf<State, Long>()
-            val buttonContributionVectors: List<ButtonContributionVector> =
+            val originalButtonContributionVectors: List<ButtonContributionVector> =
                 buttonSettings.map { bs -> wantedNumbers.mapIndexed { index, curr -> if (bs.contains(index)) 1 else 0 } }
-
+            val (state, buttonContributionVectors) = addConstraints(originalState, originalButtonContributionVectors)
             // Plan: we want to add equations, so that we can prune much faster, for this, we need to change from boolean to numbers and we should allow smaller than 0
             // For this, we need to convert our components to vectors and we need to then add extra constraints.
             // Extra constraints means that 
@@ -108,7 +108,7 @@ fun main() {
                     assert(false)
                 }
                 val results = buttonContributionVectors.mapNotNull {
-                    val newState = pushComp2(it, state)
+                    val newState = pushButton(it, state)
                     checkSolutionsRec(
                         newState,
                         pushesDone + 1
@@ -135,6 +135,13 @@ fun main() {
     prcp(part2(input))
 }
 
+fun addConstraints(
+    originalState: State,
+    originalButtonContributionVectors: List<ButtonContributionVector>
+): Pair<State, List<ButtonContributionVector>> {
+    return Pair(originalState, originalButtonContributionVectors)
+}
+
 
 fun pushComp(comp: List<Int>, state: List<Int>): List<Int> {
     val newState = state.toMutableList()
@@ -144,7 +151,7 @@ fun pushComp(comp: List<Int>, state: List<Int>): List<Int> {
     return newState
 }
 
-fun pushComp2(vector: ButtonContributionVector, state: List<Int>): List<Int> {
+fun pushButton(vector: ButtonContributionVector, state: List<Int>): List<Int> {
     val newState = state.toMutableList()
     for (i in 0 until vector.size) {
         newState[i] = newState[i] + vector[i]
