@@ -82,6 +82,7 @@ fun main() {
             val state: State = wantedNumbers.map { 0 }
 
             fun strictlyBetterCostFound(state: State, cost: Long): Boolean =
+                minCostMap.getOrDefault(state, Long.MAX_VALUE) <= cost ||
                 minCostMap.any {
                     val minCostState = it.key
                     val betterFound = cost >= it.value &&
