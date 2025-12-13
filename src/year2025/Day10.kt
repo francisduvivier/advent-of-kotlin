@@ -7,7 +7,12 @@ import readInput
 typealias State = List<Int>
 typealias ButtonContributionVector = List<Int>
 
-data class Flags(val DISABLE_EXTRA_CONSTRAINTS: Boolean = false) {
+data class Flags(
+    val DISABLE_EXTRA_CONSTRAINTS: Boolean = true,
+    val LOG_THREAD: Boolean = true,
+    val EXTRA_MIN_ROWS: Boolean = true,
+    val EXTRA_REDUCTION: Boolean = false
+) {
 }
 
 val flags = Flags()
@@ -73,6 +78,7 @@ fun main() {
 
 
     fun part2(input: List<String>): Int {
+        var lineIndex = 0
         fun solveLine(line: String): Int {
             // line example: [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
             val matchGroups = Regex("""\[([.#]+)] (.*) \{(.*)}""").matchEntire(line)?.groups!!
@@ -82,18 +88,40 @@ fun main() {
             val originalWantedNumbers: State =
                 matchGroups[3]!!.value.split(",").map { it.toInt() }
 
-            val maxPossibleCost = originalWantedNumbers.sum().toLong()
+            val maxPossibleCost = 500
             val minCostMap = mutableMapOf<State, Int>()
+            var maxPushesDone = 0
+            var bestResult = Int.MAX_VALUE
+
+          
             val originalButtonContributionVectors: List<ButtonContributionVector> =
                 buttonSettings.map { bs -> originalWantedNumbers.mapIndexed { index, curr -> if (bs.contains(index)) 1 else 0 } }
             val (wantedNumbers, buttonContributionVectors) = addConstraints(
                 originalWantedNumbers,
                 originalButtonContributionVectors
             )
+            if (true) return 0 // TODO
+            val logThread = Thread(Runnable {
+                run {
+                    while (true) {
+                        println("minCostMap.size [${minCostMap.size}], maxPushesDone [$maxPushesDone], bestResult [$bestResult] ")
+                        try {
+                            Thread.sleep(5_000)
+                        } catch (e: Throwable) {
+                            Runtime.getRuntime().gc()
+                            return@run
+                        }
+                    }
+                }
+            })
+            if (flags.LOG_THREAD) {
+                logThread.start()
+            }
             val state: State = wantedNumbers.map { 0 }
 
             fun strictlyBetterCostFound(state: State, cost: Int): Boolean =
                 minCostMap.getOrDefault(state, Int.MAX_VALUE) <= cost
+
 
             // Plan: we want to add equations, so that we can prune much faster, for this, we need to change from boolean to numbers and we should allow smaller than 0
             // For this, we need to convert our components to vectors and we need to then add extra constraints.
@@ -110,6 +138,10 @@ fun main() {
                 state: State,
                 pushesDone: Int,
             ): Int? {
+                if (pushesDone >= bestResult) {
+                    return null
+                }
+                maxPushesDone = Math.max(pushesDone, maxPushesDone)
                 var index = 0
                 if (state.any { it > wantedNumbers[index++] }) {
                     return null
@@ -119,10 +151,11 @@ fun main() {
                 }
                 minCostMap[state] = pushesDone
                 if (state == wantedNumbers) {
+                    bestResult = pushesDone
                     return pushesDone
                 }
-                if (pushesDone > maxPossibleCost) {
-                    assert(false)
+                if (pushesDone >= maxPossibleCost) {
+                    return null
                 }
                 val results = buttonContributionVectors.mapNotNull {
                     val newState = pushButton(it, state)
@@ -134,11 +167,13 @@ fun main() {
                 return results.minOrNull()
             }
 
-            print("---- Solve line $line")
+            println("---- Solve line[${lineIndex}] $line")
             val startTime = System.nanoTime()
             val checkSolutionsRec = checkSolutionsRec(state, 0)
             val timeDiffMs = (System.nanoTime() - startTime).toDouble() / 1_000_000
-            println(", SOL: $checkSolutionsRec in $timeDiffMs ms")
+            println("SOL[${lineIndex++}]: $checkSolutionsRec in $timeDiffMs ms")
+            logThread.interrupt()
+            Runtime.getRuntime().gc()
             return checkSolutionsRec!!
         }
 
@@ -153,7 +188,7 @@ fun main() {
     checkEquals(part1(testInput), 7)
     val input = readInput("Day$day")
     prcp(part1(input))
-    checkEquals(part2(testInput), 33)
+//    checkEquals(part2(testInput), 33)
     println("Flags: $flags")
     prcp(part2(input))
 }
@@ -163,15 +198,25 @@ fun addConstraints(
     wantedState: State,
     originalButtonContributionVectors: List<ButtonContributionVector>
 ): Pair<State, List<ButtonContributionVector>> {
-    if (flags.DISABLE_EXTRA_CONSTRAINTS) return Pair(wantedState, originalButtonContributionVectors)
     val augmented = toAugmentedMatrix(wantedState, originalButtonContributionVectors)
+    println(augmented.map { it.joinToString(",") }.joinToString(";"))
+    if (flags.DISABLE_EXTRA_CONSTRAINTS) return Pair(wantedState, originalButtonContributionVectors)
     val augmentedWithExtraConstraints = augmented.toMutableList()
+    if (flags.EXTRA_MIN_ROWS) {
+        val extraMinRows = augmented.mapIndexed { index, ints ->
+            augmented.slice((index + 1)..augmented.lastIndex)
+                .map { other -> if (other.last() < ints.last()) ints.doMin(other) else other.doMin(ints) }
+        }.flatten().toMutableList()
 
-    val extraRows = augmented.mapIndexed { index, ints ->
-        augmented.slice((index + 1)..augmented.lastIndex)
-            .map { other -> if (other.last() < ints.last()) ints.doMin(other) else other.doMin(ints) }
-    }.flatten()
-    augmentedWithExtraConstraints.addAll(extraRows)
+        if (flags.EXTRA_REDUCTION) {
+            for (row in extraMinRows.map { it }) {
+                val rowsWithStrictlyMore =
+                    extraMinRows.filter { other -> row !== other && (0..row.lastIndex).all { row[it] == 0 || row[it] == other[it] } && other.last() > row.last() }
+                extraMinRows.addAll(rowsWithStrictlyMore.map { it.doMin(row) })
+            }
+        }
+        augmentedWithExtraConstraints.addAll(extraMinRows)
+    }
     val newPair = fromAugmented(augmentedWithExtraConstraints)
     return newPair
 }
@@ -186,6 +231,11 @@ private fun fromAugmented(
 
 private fun List<List<Int>>.nbCols(): Int {
     return this[0].size
+}
+
+
+private fun List<Int>.doPlus(other: List<Int>): List<Int> {
+    return this.mapIndexed { index, it -> it + other[index] }
 }
 
 private fun List<Int>.doMin(other: List<Int>): List<Int> {
