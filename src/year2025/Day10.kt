@@ -73,7 +73,7 @@ fun main() {
             val maxPossibleCost = wantedNumbers.sum().toLong()
             val minCostMap = mutableMapOf<State, Int>()
             val skippedOptions = sortedSetOf<Pair<State, Int>>(
-                Comparator { p1, p2 -> p1.second - p2.second }
+                Comparator { p1, p2 -> p2.second - p1.second }
             )
 
             fun isOkState(tryState: State, pushCount: Int): Boolean {
@@ -102,7 +102,7 @@ fun main() {
                         val newPushCount = totalPushCount + 1
                         if (isOkState(tryState, newPushCount)) {
                             if (newState !== state) {
-                                skippedOptions.add(Pair(newState, totalPushCount))
+                                skippedOptions.add(Pair(newState, newPushCount))
                             }
                             minCostMap[tryState] = newPushCount
                             totalPushCount = newPushCount
@@ -132,7 +132,7 @@ fun main() {
                 if (solution != null) {
                     return solution
                 }
-                val newOption = skippedOptions.removeFirst()
+                val newOption = skippedOptions.first()
                 tryState = newOption.first
                 pushCount = newOption.second
             } while (true)
