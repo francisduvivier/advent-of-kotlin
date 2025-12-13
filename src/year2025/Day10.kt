@@ -132,7 +132,8 @@ fun main() {
                 if (solution != null) {
                     return solution
                 }
-                val newOption = skippedOptions.removeFirst()
+                val newOption = skippedOptions.sortedBy { it.first.sum() - it.second }.first()
+                skippedOptions.remove(newOption)
                 tryState = newOption.first
                 pushCount = newOption.second
             } while (true)
