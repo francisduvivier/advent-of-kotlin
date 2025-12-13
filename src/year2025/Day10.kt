@@ -9,8 +9,8 @@ typealias ButtonContributionVector = List<Int>
 
 
 fun main() {
-    fun part1(input: List<String>): Long {
-        fun solveLine(line: String): Long {
+    fun part1(input: List<String>): Int {
+        fun solveLine(line: String): Int {
             // line example: [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
             val matchGroups = Regex("""\[([.#]+)] (.*) \{.*""").matchEntire(line)?.groups!!
             val wantedChars = matchGroups[1]!!.value.toCharArray().map { if (it == '#') 1 else 0 }
@@ -49,7 +49,7 @@ fun main() {
 
             for (trySize in 1..nbCoeffs) {
                 if (checkSolutionsRec(components, state, trySize)) {
-                    return trySize.toLong()
+                    return trySize
                 }
             }
             throw Exception("No solution found")
@@ -61,8 +61,8 @@ fun main() {
     }
 
 
-    fun part2(input: List<String>): Long {
-        fun solveLine(line: String): Long {
+    fun part2(input: List<String>): Int {
+        fun solveLine(line: String): Int {
             // line example: [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
             val matchGroups = Regex("""\[([.#]+)] (.*) \{(.*)}""").matchEntire(line)?.groups!!
             val buttonSettings: List<List<Int>> =
@@ -72,7 +72,7 @@ fun main() {
                 matchGroups[3]!!.value.split(",").map { it.toInt() }
 
             val maxPossibleCost = originalWantedNumbers.sum().toLong()
-            val minCostMap = mutableMapOf<State, Long>()
+            val minCostMap = mutableMapOf<State, Int>()
             val originalButtonContributionVectors: List<ButtonContributionVector> =
                 buttonSettings.map { bs -> originalWantedNumbers.mapIndexed { index, curr -> if (bs.contains(index)) 1 else 0 } }
             val (wantedNumbers, buttonContributionVectors) = addConstraints(
@@ -81,8 +81,8 @@ fun main() {
             )
             val state: State = wantedNumbers.map { 0 }
 
-            fun strictlyBetterCostFound(state: State, cost: Long): Boolean =
-                minCostMap.getOrDefault(state, Long.MAX_VALUE) <= cost ||
+            fun strictlyBetterCostFound(state: State, cost: Int): Boolean =
+                minCostMap.getOrDefault(state, Int.MAX_VALUE) <= cost ||
                 minCostMap.any {
                     val minCostState = it.key
                     val betterFound = cost >= it.value &&
@@ -103,8 +103,8 @@ fun main() {
             // so extra counter means an extra setting for every button
             fun checkSolutionsRec(
                 state: State,
-                pushesDone: Long,
-            ): Long? {
+                pushesDone: Int,
+            ): Int? {
                 var index = 0
                 if (state.any { it > wantedNumbers[index++] }) {
                     return null
